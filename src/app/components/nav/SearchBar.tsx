@@ -1,5 +1,4 @@
 import { Autocomplete, InputBase } from "@mui/material"
-import { useAutocomplete } from "@mui/base/useAutocomplete"
 import { styled, alpha } from "@mui/material/styles"
 import { Search as SearchIcon } from "@mui/icons-material"
 
@@ -41,13 +40,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   color: "inherit",
   width: 300,
-  // transition: theme.transitions.create("width"),
-  // [theme.breakpoints.up("sm")]: {
-  //   width: "20ch",
-  //   "&:focus-within": {
-  //     width: "35ch",
-  //   },
-  // },
 }))
 
 function SearchBar() {
