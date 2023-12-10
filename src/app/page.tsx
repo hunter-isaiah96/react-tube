@@ -1,14 +1,10 @@
 import { Box, Grid } from "@mui/material"
-import PocketBase from "pocketbase"
-import VideoPreview, { type Video } from "./components/VideoPreview"
-const getVideos = async () => {
-  const res = await fetch("http://127.0.0.1:8090/api/collections/videos/records")
-  const data = await res.json()
-  return data.items as Video[]
-}
+import VideoPreview from "./components/VideoPreview"
+import db from "@/app/connect"
 
 export default async function Home() {
-  const videos = await getVideos()
+  const { items: videos } = await db.getVideos()
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid
