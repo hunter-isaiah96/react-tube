@@ -81,50 +81,61 @@ export default function ProfileMenu(props: { user: UsersResponse | null }) {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {props.user ? (
-          <>
-            <MenuItem onClick={handleClose}>
-              <Avatar /> Profile
-            </MenuItem>
-            <Divider />
-            <MenuItem onClick={handleClose}>
-              <ListItemIcon>
-                <Settings fontSize='small' />
-              </ListItemIcon>
-              Settings
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose()
-                signOut()
-              }}
-            >
-              <ListItemIcon>
-                <Logout fontSize='small' />
-              </ListItemIcon>
-              Logout
-            </MenuItem>
-          </>
-        ) : (
-          <>
-            <Link href='/login'>
-              <MenuItem onClick={handleClose}>
+        {props.user
+          ? [
+              <MenuItem
+                key='profile'
+                onClick={handleClose}
+              >
+                <Avatar /> Profile
+              </MenuItem>,
+              <Divider key='divider' />,
+              <MenuItem
+                key='settings'
+                onClick={handleClose}
+              >
                 <ListItemIcon>
-                  <LockOpenOutlined />
+                  <Settings fontSize='small' />
                 </ListItemIcon>
-                Log in
-              </MenuItem>
-            </Link>
-            <Link href='/register'>
-              <MenuItem onClick={handleClose}>
+                Settings
+              </MenuItem>,
+              <MenuItem
+                key='logout'
+                onClick={() => {
+                  handleClose()
+                  signOut()
+                }}
+              >
                 <ListItemIcon>
-                  <PersonAddOutlined />
+                  <Logout fontSize='small' />
                 </ListItemIcon>
-                Register
-              </MenuItem>
-            </Link>
-          </>
-        )}
+                Logout
+              </MenuItem>,
+            ]
+          : [
+              <Link
+                key='login'
+                href='/login'
+              >
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <LockOpenOutlined />
+                  </ListItemIcon>
+                  Log in
+                </MenuItem>
+              </Link>,
+              <Link
+                key='register'
+                href='/register'
+              >
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <PersonAddOutlined />
+                  </ListItemIcon>
+                  Register
+                </MenuItem>
+              </Link>,
+            ]}
       </Menu>
     </>
   )
