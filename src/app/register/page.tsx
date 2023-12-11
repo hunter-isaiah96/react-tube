@@ -1,18 +1,28 @@
 "use client"
 import { useState } from "react"
-import { Avatar, Button, CssBaseline, TextField, Grid, Box, Typography, Container, Link } from "@mui/material"
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import { useRouter } from "next/navigation"
+import { Avatar, CssBaseline, TextField, Grid, Box, Typography, Container, Link } from "@mui/material"
+import { LoadingButton } from "@mui/lab"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { setCookie } from "typescript-cookie"
+import Person from "@mui/icons-material/Person"
+import db from "@/app/connect"
 const theme = createTheme()
 
-export default function Signup() {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+export default function SignIn() {
+  const [username, setUsername] = useState<string>("rhynoboy2009")
+  const [password, setPassword] = useState<string>("isaiah96")
+  const [authenticating, setAuthenticating] = useState<boolean>(false)
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault()
-    console.log("A form was submitted:", username, password)
+    try {
+      setAuthenticating(true)
+    } catch (error) {
+      setAuthenticating(false)
+    } finally {
+      setAuthenticating(false)
+    }
   }
 
   return (
@@ -30,8 +40,8 @@ export default function Signup() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+            <Person />
           </Avatar>
           <Typography
             component='h1'
@@ -56,6 +66,7 @@ export default function Signup() {
               autoFocus
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              disabled={authenticating}
             />
             <TextField
               margin='normal'
@@ -65,29 +76,21 @@ export default function Signup() {
               label='Password'
               type='password'
               id='password'
+              autoComplete='password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-            />
-            <TextField
-              margin='normal'
-              required
-              fullWidth
-              name='confirmPassword'
-              label='Confirm Password'
-              type='password'
-              id='confirmPassword'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={authenticating}
             />
 
-            <Button
+            <LoadingButton
               type='submit'
               fullWidth
               variant='contained'
+              loading={authenticating}
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign up
-            </Button>
+              Sign Up
+            </LoadingButton>
             <Grid container>
               <Grid
                 item
@@ -95,10 +98,10 @@ export default function Signup() {
               ></Grid>
               <Grid item>
                 <Link
-                  href='/signin'
+                  href='/login'
                   variant='body2'
                 >
-                  {"Already have an account? Sign in."}
+                  {"Already have an account? Log in."}
                 </Link>
               </Grid>
             </Grid>

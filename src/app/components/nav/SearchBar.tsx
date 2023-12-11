@@ -39,7 +39,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   color: "inherit",
-  width: 300,
+  width: "100%",
 }))
 
 function SearchBar() {

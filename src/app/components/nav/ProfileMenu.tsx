@@ -1,15 +1,15 @@
-// "use client"
-import * as React from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Box, Avatar, Menu, MenuItem, ListItemIcon, Divider, IconButton, Tooltip } from "@mui/material"
-import { Settings, Logout } from "@mui/icons-material"
+import { Settings, Logout, LockOpenOutlined, PersonAddOutlined } from "@mui/icons-material"
 import { UsersResponse } from "@/app/pocketbase-types"
 import db from "@/app/connect"
 import { removeCookie } from "typescript-cookie"
+import Link from "next/link"
 
-export default function ProfileMenu(props: { user: UsersResponse }) {
+export default function ProfileMenu(props: { user: UsersResponse | null }) {
   const router = useRouter()
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -21,7 +21,7 @@ export default function ProfileMenu(props: { user: UsersResponse }) {
   const signOut = async () => {
     removeCookie("pb_auth")
     db.client.authStore.clear()
-    router.push("/signin")
+    router.push("/login")
   }
   return (
     <>
@@ -38,7 +38,9 @@ export default function ProfileMenu(props: { user: UsersResponse }) {
                 alt={props.user.name}
                 src={db.getFile(props.user.collectionId, props.user.id, props.user.avatar)}
               ></Avatar>
-            ) : null}
+            ) : (
+              <Avatar></Avatar>
+            )}
           </IconButton>
         </Tooltip>
       </Box>
@@ -79,27 +81,50 @@ export default function ProfileMenu(props: { user: UsersResponse }) {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize='small' />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleClose()
-            signOut()
-          }}
-        >
-          <ListItemIcon>
-            <Logout fontSize='small' />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+        {props.user ? (
+          <>
+            <MenuItem onClick={handleClose}>
+              <Avatar /> Profile
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <Settings fontSize='small' />
+              </ListItemIcon>
+              Settings
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose()
+                signOut()
+              }}
+            >
+              <ListItemIcon>
+                <Logout fontSize='small' />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </>
+        ) : (
+          <>
+            <Link href='/login'>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <LockOpenOutlined />
+                </ListItemIcon>
+                Log in
+              </MenuItem>
+            </Link>
+            <Link href='/register'>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <PersonAddOutlined />
+                </ListItemIcon>
+                Register
+              </MenuItem>
+            </Link>
+          </>
+        )}
       </Menu>
     </>
   )

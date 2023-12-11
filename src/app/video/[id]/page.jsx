@@ -1,17 +1,31 @@
-// import { useRouter } from "next/navigation"
-import { getVideo, getFile } from "@/app/connect"
+import db from "@/app/connect"
+import { Grid } from "@mui/material"
 async function Video({ params }) {
-  const video = await getVideo(params.id)
+  const video = await db.getVideo(params.id)
 
   // const router = useRouter()
   return (
     <>
-      <div sx={{ margin: "auto" }}>
-        <video
-          src={getFile(video.collectionId, video.id, video.video)}
-          controls
-        ></video>
-      </div>
+      <Grid
+        container
+        spacing={2}
+        sx={{ marginX: 8 }}
+      >
+        <Grid
+          item
+          xs={8}
+        >
+          <video
+            style={{ aspectRatio: 16 / 9 }}
+            src={db.getFile(video.collectionId, video.id, video.video)}
+            controls
+          ></video>
+        </Grid>
+        <Grid
+          item
+          xs={4}
+        ></Grid>
+      </Grid>
     </>
   )
 }

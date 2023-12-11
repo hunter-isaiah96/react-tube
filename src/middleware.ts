@@ -10,13 +10,13 @@ export function middleware(request: NextRequest) {
     pb.authStore.loadFromCookie(`${cookie.value}`)
   }
   const isValidCookie = pb.authStore.isValid
-  if (!isValidCookie) {
-    return NextResponse.redirect(new URL("/signin", request.url))
+  if (isValidCookie) {
+    return NextResponse.redirect(new URL("/", request.url))
   }
   NextResponse.next()
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/"],
+  matcher: ["/login", "/register"],
 }

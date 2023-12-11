@@ -4,7 +4,6 @@ import db from "@/app/connect"
 
 export default async function Home() {
   const { items: videos } = await db.getVideos()
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid

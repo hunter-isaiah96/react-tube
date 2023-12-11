@@ -11,9 +11,9 @@ import db from "@/app/connect"
 const theme = createTheme()
 
 export default function SignIn() {
-  const [username, setUsername] = useState("rhynoboy2009")
-  const [password, setPassword] = useState("isaiah96")
-  const [authenticating, setAuthenticating] = useState(false)
+  const [username, setUsername] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const [authenticating, setAuthenticating] = useState<boolean>(false)
   const router = useRouter()
 
   const handleSubmit = async (e: any) => {
@@ -46,7 +46,7 @@ export default function SignIn() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography
@@ -95,7 +95,7 @@ export default function SignIn() {
               loading={authenticating}
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Log in
             </LoadingButton>
             <Grid container>
               <Grid
@@ -111,10 +111,10 @@ export default function SignIn() {
               </Grid>
               <Grid item>
                 <Link
-                  href='/signup'
+                  href='/register'
                   variant='body2'
                 >
-                  {"Don't have an account? Sign Up"}
+                  {"Don't have an account? Register."}
                 </Link>
               </Grid>
             </Grid>
