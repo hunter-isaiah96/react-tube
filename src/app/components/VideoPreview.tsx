@@ -23,7 +23,7 @@ export default function VideoPreview(props: { video: VideosUsersResponse }) {
               >
                 <Avatar
                   alt={`${props.video.expand.user.name}'s avatar`}
-                  src={db.getFile(props.video.expand.user.collectionId, props.video.expand.user.id, props.video.expand.user.avatar)}
+                  src={db.getFile({ collectionId: props.video.expand.user.collectionId, recordId: props.video.expand.user.id, fileName: props.video.expand.user.avatar })}
                 />
               </Grid>
               <Grid

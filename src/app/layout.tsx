@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { Box, Toolbar } from "@mui/material"
 import MainNav from "./components/nav/MainNav"
 import AppWrapper from "./components/AppWrapper"
+import { ReduxProvider } from "@/store/provider"
 
 const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
@@ -15,12 +16,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <AppWrapper>
-          <MainNav />
-          <main>
-            <Box sx={{ padding: 2 }}>{children}</Box>
-          </main>
-        </AppWrapper>
+        <ReduxProvider>
+          <AppWrapper>
+            <MainNav />
+            <main>
+              <Box sx={{ padding: 2 }}>{children}</Box>
+            </main>
+          </AppWrapper>
+        </ReduxProvider>
       </body>
     </html>
   )

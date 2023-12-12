@@ -42,7 +42,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   width: "100%",
 }))
 
-function SearchBar() {
+export default function SearchBar() {
   const searchTerms: any[] = []
   return (
     <Search>
@@ -68,5 +68,3 @@ function SearchBar() {
     </Search>
   )
 }
-
-export default SearchBar

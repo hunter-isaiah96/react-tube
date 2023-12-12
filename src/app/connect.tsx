@@ -3,6 +3,11 @@ import { Collections, UsersResponse, type VideosUsersResponse } from "@/app/pock
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 
 export const POCKET_BASE_URL = "http://127.0.0.1:8090"
+type File = {
+  collectionId: string
+  recordId: string
+  fileName: string
+}
 
 class DBClient {
   client: PocketBase
@@ -33,8 +38,8 @@ class DBClient {
   async getVideo(videoId: string): Promise<VideosUsersResponse> {
     return this.client.collection(Collections.Videos).getFirstListItem<VideosUsersResponse>(`id ~ "${videoId}"`, { expand: "user" })
   }
-  getFile(collectionId: string, recordId: string, fileName: string) {
-    return fileName ? `${this.client.baseUrl}/api/files/${collectionId}/${recordId}/${fileName}` : ""
+  getFile(file: File) {
+    return file.fileName ? `${this.client.baseUrl}/api/files/${file.collectionId}/${file.recordId}/${file.fileName}` : ""
   }
 }
 

@@ -6,7 +6,7 @@ type NavDrawerType = {
   mobileOpen: boolean
   toggleMenu: Function
 }
-function NavDrawer(props: NavDrawerType) {
+export default function NavDrawer(props: NavDrawerType) {
   const drawerWidth = 300
   const navigationItems = [
     { title: "Home", icon: <HomeOutlined />, to: "/" },
@@ -44,5 +44,3 @@ function NavDrawer(props: NavDrawerType) {
     </Drawer>
   )
 }
-
-export default NavDrawer

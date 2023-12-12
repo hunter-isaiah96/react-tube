@@ -1,30 +1,22 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { AppBar, Toolbar, Typography, IconButton, Button, Box, styled } from "@mui/material"
 import { Menu as MenuIcon } from "@mui/icons-material"
-import { type UsersResponse } from "@/app/pocketbase-types"
 import { usePathname } from "next/navigation"
 import SearchBar from "./SearchBar"
 import NavDrawer from "./NavDrawer"
 import ProfileMenu from "./ProfileMenu"
 import UploadVideo from "./UploadVideo"
-import db from "@/app/connect"
-import { width } from "@mui/system"
+import { useAppSelector } from "@/store/store"
 
-function MainNav() {
+export default function MainNav() {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false)
-  const [user, setUser] = useState<UsersResponse | null>(null)
+  const user = useAppSelector((state) => state.authReducer.value.user)
   const handleMenuToggle = () => {
     setMobileOpen(!mobileOpen)
   }
   const currentPath = usePathname()
   const disabledRoutes = ["/login", "/register"]
-  useEffect(() => {
-    setUser(db.client.authStore.model as UsersResponse)
-    db.client.authStore.onChange(() => {
-      setUser(db.client.authStore.model as UsersResponse)
-    })
-  }, [])
 
   const EqualBox = styled(Box)(({ theme }) => ({
     flex: 1,
@@ -78,4 +70,3 @@ function MainNav() {
     </>
   )
 }
-export default MainNav

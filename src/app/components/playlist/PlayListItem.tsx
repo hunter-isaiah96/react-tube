@@ -4,14 +4,14 @@ import Image from "next/image"
 import { faker } from "@faker-js/faker"
 import Link from "next/link"
 
-function PlayListItem() {
+export default function PlayListItem() {
   return (
     <Link href='#'>
       <ListItem alignItems='flex-start'>
         <Image
           unoptimized
-          width={100}
-          height={100}
+          width='0'
+          height='0'
           className='recommended-thumbnail'
           alt='video thumbnail'
           src={faker.image.urlLoremFlickr({ category: "nature" })}
@@ -47,5 +47,3 @@ function PlayListItem() {
     </Link>
   )
 }
-
-export default PlayListItem

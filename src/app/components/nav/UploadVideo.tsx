@@ -20,6 +20,7 @@ function SimpleDialog(props: DialogProps) {
       onClose={handleClose}
       open={props.open}
       maxWidth={"md"}
+      disableScrollLock={true}
       fullWidth
     >
       <DialogTitle>Upload Video</DialogTitle>
@@ -44,7 +45,7 @@ export default function UploadVideo() {
         color='inherit'
         onClick={handleClickOpen}
       >
-        <VideoCallOutlined />
+        <VideoCallOutlined></VideoCallOutlined>
       </IconButton>
       <SimpleDialog
         open={open}

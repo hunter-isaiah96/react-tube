@@ -7,7 +7,7 @@ import db from "@/app/connect"
 import { removeCookie } from "typescript-cookie"
 import Link from "next/link"
 
-export default function ProfileMenu(props: { user: UsersResponse | null }) {
+export default function ProfileMenu(props: { user: UsersResponse | false }) {
   const router = useRouter()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -36,7 +36,7 @@ export default function ProfileMenu(props: { user: UsersResponse | null }) {
             {props.user ? (
               <Avatar
                 alt={props.user.name}
-                src={db.getFile(props.user.collectionId, props.user.id, props.user.avatar)}
+                src={db.getFile({ collectionId: props.user.collectionId, recordId: props.user.id, fileName: props.user.avatar })}
               ></Avatar>
             ) : (
               <Avatar></Avatar>
@@ -50,6 +50,7 @@ export default function ProfileMenu(props: { user: UsersResponse | null }) {
         open={open}
         onClose={handleClose}
         onClick={handleClose}
+        disableScrollLock={true}
         slotProps={{
           paper: {
             elevation: 0,

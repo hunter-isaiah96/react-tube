@@ -4,12 +4,10 @@ type AuthState = {
   user: UsersResponse | false
 }
 type InitialState = {
-  value: AuthState | object
+  value: AuthState
 }
 const initialState = {
-  value: {
-    user: {} as AuthState,
-  },
+  value: {},
 } as InitialState
 
 export const auth = createSlice({

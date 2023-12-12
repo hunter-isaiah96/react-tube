@@ -10,18 +10,33 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import db from "@/app/connect"
 const theme = createTheme()
 
+type LoginData = {
+  username: string
+  password: string
+}
+
 export default function SignIn() {
-  const [username, setUsername] = useState<string>("")
-  const [password, setPassword] = useState<string>("")
+  const [authData, setAuthData] = useState<LoginData>({
+    username: "",
+    password: "",
+  })
   const [authenticating, setAuthenticating] = useState<boolean>(false)
   const router = useRouter()
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target
+    setAuthData({
+      ...authData,
+      [name]: value,
+    })
+  }
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     try {
       setAuthenticating(true)
       // await db.authenticate(username, password)
-      await db.client.collection("users").authWithPassword(username, password)
+      await db.client.collection("users").authWithPassword(authData.username, authData.password)
       setCookie("pb_auth", db.client.authStore.exportToCookie({ httpOnly: false }))
       router.push("/")
     } catch (error) {
@@ -70,8 +85,8 @@ export default function SignIn() {
               name='username'
               autoComplete='username'
               autoFocus
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={authData.username}
+              onChange={handleInputChange}
               disabled={authenticating}
             />
             <TextField
@@ -83,8 +98,8 @@ export default function SignIn() {
               type='password'
               id='password'
               autoComplete='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={authData.password}
+              onChange={handleInputChange}
               disabled={authenticating}
             />
 
