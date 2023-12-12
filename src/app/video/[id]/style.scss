@@ -10,3 +10,14 @@
   width: auto;
   height: 100;
 }
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  &.two-line {
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}

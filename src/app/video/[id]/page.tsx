@@ -1,8 +1,8 @@
 import "./style.scss"
 import db from "@/app/connect"
-import { Avatar, Button, Grid, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material"
-import { grey } from "@mui/material/colors"
-import Image from "next/image"
+import { Grid, List, Typography } from "@mui/material"
+import PlayListItem from "@/app/components/playlist/PlayListItem"
+import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"
 type IVideo = {
   params: {
     id: string
@@ -33,60 +33,16 @@ async function Video({ params }: IVideo) {
           >
             {video.title}
           </Typography>
-          <Grid
-            container
-            alignItems={"center"}
-          >
-            <Grid item>
-              <ListItem disablePadding>
-                <ListItemAvatar>
-                  <Avatar src={db.getFile(video.expand.user.collectionId, video.expand.user.id, video.expand.user.avatar)}></Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={video.expand.user.name}
-                  secondary='1.2M Subscribers'
-                />
-              </ListItem>
-            </Grid>
-            <Grid
-              item
-              marginLeft={5}
-            >
-              <Button variant='contained'>Subscribe</Button>
-            </Grid>
-          </Grid>
+          <EngagementPanel video={video}></EngagementPanel>
         </Grid>
         <Grid
           item
           xs={3}
         >
           <List sx={{ overflow: "hidden" }}>
-            <ListItem alignItems='flex-start'>
-              <Image
-                width={100}
-                height={100}
-                className='recommended-thumbnail'
-                alt='video thumbnail'
-                src='https://images.pexels.com/photos/19346529/pexels-photo-19346529/free-photo-of-man-riding-motor-scooter-on-street.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
-              ></Image>
-              <ListItemText
-                sx={{ marginLeft: 2 }}
-                primary={
-                  <Typography
-                    variant='subtitle2'
-                    sx={{ overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: "2", WebkitBoxOrient: "vertical" }}
-                  >
-                    This is a very simple video for a very simple video
-                  </Typography>
-                }
-                secondary={
-                  <>
-                    <Typography variant='caption'>rhynoboy2009</Typography>
-                    <Typography variant='caption'>rhynoboy2009</Typography>
-                  </>
-                }
-              ></ListItemText>
-            </ListItem>
+            {Array.from({ length: 3 }).map((item, index) => (
+              <PlayListItem key={index}></PlayListItem>
+            ))}
           </List>
         </Grid>
       </Grid>

@@ -27,3 +27,8 @@ a {
     color-scheme: dark;
   }
 }
+
+
+.capitalize {
+  text-transform: capitalize;
+}
