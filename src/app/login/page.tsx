@@ -1,6 +1,5 @@
 "use client"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Avatar, CssBaseline, TextField, Grid, Box, Typography, Container, Link } from "@mui/material"
 import { LoadingButton } from "@mui/lab"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
@@ -21,7 +20,6 @@ export default function SignIn() {
     password: "",
   })
   const [authenticating, setAuthenticating] = useState<boolean>(false)
-  const router = useRouter()
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
@@ -35,10 +33,9 @@ export default function SignIn() {
     e.preventDefault()
     try {
       setAuthenticating(true)
-      // await db.authenticate(username, password)
       await db.client.collection("users").authWithPassword(authData.username, authData.password)
       setCookie("pb_auth", db.client.authStore.exportToCookie({ httpOnly: false }))
-      router.push("/")
+      window.location.href = "/"
     } catch (error) {
       setAuthenticating(false)
     } finally {

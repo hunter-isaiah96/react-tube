@@ -1,5 +1,4 @@
 import { ListItem, ListItemText, Typography } from "@mui/material"
-import {} from "@mui/material"
 import Image from "next/image"
 import { faker } from "@faker-js/faker"
 import Link from "next/link"

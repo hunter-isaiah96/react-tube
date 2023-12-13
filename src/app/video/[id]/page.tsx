@@ -4,7 +4,7 @@ import { Grid, List, Typography } from "@mui/material"
 import PlayListItem from "@/app/components/playlist/PlayListItem"
 import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"
 import { Metadata } from "next"
-import Comments from "@/app/components/video/comments-section/Comments"
+import CommentsWrapper from "@/app/components/video/comments-section/CommentsWrapper"
 
 type IVideo = {
   params: {
@@ -42,14 +42,14 @@ async function Video({ params }: IVideo) {
             {video.title}
           </Typography>
           <EngagementPanel video={video}></EngagementPanel>
-          <Comments></Comments>
+          <CommentsWrapper></CommentsWrapper>
         </Grid>
         <Grid
           item
           xs={3}
         >
           <List sx={{ overflow: "hidden" }}>
-            {Array.from({ length: 10 }).map((item, index) => (
+            {Array.from({ length: 20 }).map((item, index) => (
               <PlayListItem key={index}></PlayListItem>
             ))}
           </List>

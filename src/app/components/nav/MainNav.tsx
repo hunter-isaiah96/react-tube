@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { AppBar, Toolbar, Typography, IconButton, Button, Box, styled } from "@mui/material"
+import { AppBar, Toolbar, Typography, IconButton, Box, styled } from "@mui/material"
 import { Menu as MenuIcon } from "@mui/icons-material"
 import { usePathname } from "next/navigation"
 import SearchBar from "./SearchBar"
