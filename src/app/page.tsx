@@ -23,3 +23,5 @@ export default async function Home() {
     </Box>
   )
 }
+
+export const fetchCache = "default-no-store"

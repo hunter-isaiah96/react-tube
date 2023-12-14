@@ -2,7 +2,7 @@
 import { PreviewImage, base64ToBlob, getThumbnails } from "../helpers/video"
 import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { Box, FormControl, FormControlLabel, Grid, ImageList, ImageListItem, Radio, RadioGroup, TextField, Typography } from "@mui/material"
+import { Box, FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField, Typography } from "@mui/material"
 import { Textarea } from "@mui/joy"
 import { CloudUpload } from "@mui/icons-material"
 import { useDropzone } from "react-dropzone"
@@ -71,20 +71,6 @@ const Upload = () => {
     } finally {
       setUploading(false)
     }
-    // const formData = new FormData()
-    // formData.append("video", videoFile)
-    // formData.append("title", title)
-    // formData.append("description", description)
-    //   if (videoThumbnail) formData.append("thumbnail", videoThumbnail)
-    //   if (user) {
-    //     formData.append("user", user.id)
-    //   }
-    // const videoRecord = await db.client.collection("videos").create(formData)
-    // router.push(`/video/${videoRecord.id}`)
-    // } catch (error) {
-    // } finally {
-    //   setUploading(false)
-    // }
   }
 
   return (
@@ -120,13 +106,19 @@ const Upload = () => {
               }}
               {...getRootProps()}
             >
-              <input {...getInputProps()} />
+              <input
+                {...getInputProps()}
+                accept='.mp4'
+              />
               {isDragActive ? (
                 <Typography variant='body1'>Drop the files here...</Typography>
               ) : (
                 <Box>
                   <CloudUpload />
-                  <Typography>Drag and drop files here or click to select files</Typography>
+                  <Typography>
+                    Drag and drop files here or click to select files,
+                    <br /> MAX FILE SIZE: 100MB
+                  </Typography>
                 </Box>
               )}
             </Box>
@@ -178,12 +170,13 @@ const Upload = () => {
                     xs={3}
                   >
                     <FormControlLabel
-                      sx={{ margin: 0 }}
+                      style={{ margin: 0 }}
                       value={image.id}
                       control={<Radio sx={{ display: "none" }} />}
                       label={
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
+                          style={{ margin: 0, border: selectedThumbnail == image.id ? "5px solid lightblue" : "2px solid transparent" }}
                           width='100%'
                           src={image.image}
                           alt={`Image ${image.id}`}

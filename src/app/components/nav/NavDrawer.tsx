@@ -20,6 +20,7 @@ export default function NavDrawer(props: NavDrawerType) {
       ModalProps={{
         keepMounted: true, // Better open performance on mobile.
       }}
+      disableScrollLock={true}
       sx={{
         display: { xs: "none", sm: "block" },
         "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
