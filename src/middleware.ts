@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import PocketBase from "pocketbase"
-import { POCKET_BASE_URL } from "./app/connect"
+import { POCKET_BASE_URL } from "./app/helpers/connect"
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const cookie = request.cookies.get("pb_auth")

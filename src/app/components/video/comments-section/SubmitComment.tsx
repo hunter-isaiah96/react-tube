@@ -4,7 +4,7 @@ import PillButton from "../../ui/PillButton"
 import { useState } from "react"
 import { UsersResponse } from "@/app/pocketbase-types"
 import { useAppSelector } from "@/store/store"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 
 export default function SubmitComment() {
   const [commentsEnabled, setCommentsEnabled] = useState(false)

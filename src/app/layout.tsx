@@ -1,7 +1,7 @@
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { Box, Toolbar } from "@mui/material"
+import { Box } from "@mui/material"
 import MainNav from "./components/nav/MainNav"
 import AppWrapper from "./components/AppWrapper"
 import { ReduxProvider } from "@/store/provider"

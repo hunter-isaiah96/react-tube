@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { setCookie } from "typescript-cookie"
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 const theme = createTheme()
 
 type LoginData = {

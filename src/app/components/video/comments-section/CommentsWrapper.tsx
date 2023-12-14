@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker"
 import SubmitComment from "./SubmitComment"
 
 export default function Comments() {
-  const comments = Array.from({ length: 20 }).map((item, index) => {
+  const comments = Array.from({ length: 10 }).map((item, index) => {
     return { username: faker.person.firstName(), message: faker.lorem.sentences({ min: 1, max: 6 }), likes: faker.number.int({ min: 0, max: 500 }) }
   })
   return (

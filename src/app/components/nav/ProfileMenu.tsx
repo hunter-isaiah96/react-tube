@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation"
 import { Box, Avatar, Menu, MenuItem, ListItemIcon, Divider, IconButton, Tooltip } from "@mui/material"
 import { Settings, Logout, LockOpenOutlined, PersonAddOutlined } from "@mui/icons-material"
 import { UsersResponse } from "@/app/pocketbase-types"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 import { removeCookie } from "typescript-cookie"
 import Link from "next/link"
 

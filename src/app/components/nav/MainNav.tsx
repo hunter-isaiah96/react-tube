@@ -1,21 +1,21 @@
 "use client"
 import { useState } from "react"
 import { AppBar, Toolbar, Typography, IconButton, Box, styled } from "@mui/material"
-import { Menu as MenuIcon } from "@mui/icons-material"
-import { usePathname } from "next/navigation"
+import { Menu as MenuIcon, VideoCallOutlined } from "@mui/icons-material"
+import { usePathname, useRouter } from "next/navigation"
 import SearchBar from "./SearchBar"
 import NavDrawer from "./NavDrawer"
 import ProfileMenu from "./ProfileMenu"
-import UploadVideo from "./UploadVideo"
 import { useAppSelector } from "@/store/store"
 
 export default function MainNav() {
+  const currentPath = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState<boolean>(false)
   const user = useAppSelector((state) => state.authReducer.value.user)
   const handleMenuToggle = () => {
     setMobileOpen(!mobileOpen)
   }
-  const currentPath = usePathname()
   const disabledRoutes = ["/login", "/register"]
 
   const EqualBox = styled(Box)(({ theme }) => ({
@@ -55,7 +55,14 @@ export default function MainNav() {
                 </Box>
               </EqualBox>
               <EqualBox sx={{ justifyContent: "end" }}>
-                {user ? <UploadVideo /> : null}
+                {user ? (
+                  <IconButton
+                    color='inherit'
+                    onClick={() => router.push("/upload")}
+                  >
+                    <VideoCallOutlined></VideoCallOutlined>
+                  </IconButton>
+                ) : null}
                 <ProfileMenu user={user}></ProfileMenu>
               </EqualBox>
             </Toolbar>

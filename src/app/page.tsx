@@ -1,6 +1,6 @@
 import { Box, Grid } from "@mui/material"
 import VideoPreview from "./components/VideoPreview"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 
 export default async function Home() {
   const { items: videos } = await db.getVideos()

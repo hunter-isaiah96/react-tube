@@ -1,7 +1,7 @@
 "use client"
 import "./style.scss"
 import { Avatar, Box, Divider, Grid, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 import { VideosUsersResponse } from "@/app/pocketbase-types"
 import { useReducer, useState } from "react"
 import { CheckCircle, ContentCut, PlaylistAdd, Reply, ThumbDownAlt, ThumbDownAltOutlined, ThumbUpAlt, ThumbUpAltOutlined } from "@mui/icons-material"

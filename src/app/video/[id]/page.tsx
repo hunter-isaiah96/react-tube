@@ -1,5 +1,5 @@
 import "./style.scss"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 import { Grid, List, Typography } from "@mui/material"
 import PlayListItem from "@/app/components/playlist/PlayListItem"
 import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"

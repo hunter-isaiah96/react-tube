@@ -4,7 +4,7 @@ import { setUser } from "@/store/features/auth-slice"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/store/store"
 import { UsersResponse } from "../pocketbase-types"
-import db from "../connect"
+import db from "../helpers/connect"
 
 function AppWrapper({ children }: { children: React.ReactNode }) {
   // const dispatch = useDispatch<AppDispatch>()

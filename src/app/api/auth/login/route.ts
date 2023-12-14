@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 import { cookies } from "next/headers"
 
 export async function POST(request: Request) {

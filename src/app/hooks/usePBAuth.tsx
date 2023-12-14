@@ -1,6 +1,6 @@
 "use client"
 import { useEffect } from "react"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 import { getCookie } from "typescript-cookie"
 import { setUser } from "@/store/features/auth-slice"
 import { useDispatch } from "react-redux"

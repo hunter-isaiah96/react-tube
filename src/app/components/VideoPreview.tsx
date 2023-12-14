@@ -1,6 +1,6 @@
 import { Card, CardContent, CardMedia, Typography, Grid, Avatar, CardActionArea } from "@mui/material"
 import { type VideosUsersResponse } from "@/app/pocketbase-types"
-import db from "@/app/connect"
+import db from "@/app/helpers/connect"
 import moment from "moment"
 import Link from "next/link"
 
@@ -12,8 +12,8 @@ export default function VideoPreview(props: { video: VideosUsersResponse }) {
           <CardMedia
             component='img'
             alt='green iguana'
-            height={150}
-            image={props.video.thumbnail}
+            height={180}
+            image={db.getFile({ collectionId: props.video.collectionId, recordId: props.video.id, fileName: props.video.thumbnail })}
           />
           <CardContent>
             <Grid container>
