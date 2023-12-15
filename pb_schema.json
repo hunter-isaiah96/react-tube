@@ -30,7 +30,13 @@
         "options": {
           "maxSelect": 1,
           "maxSize": 5242880,
-          "mimeTypes": ["image/jpeg", "image/png", "image/svg+xml", "image/gif", "image/webp"],
+          "mimeTypes": [
+            "image/jpeg",
+            "image/png",
+            "image/svg+xml",
+            "image/gif",
+            "image/webp"
+          ],
           "thumbs": null,
           "protected": false
         }
@@ -64,6 +70,20 @@
         "id": "fhlqavuh",
         "name": "title",
         "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "aoiprst2",
+        "name": "description",
+        "type": "text",
         "required": false,
         "presentable": false,
         "unique": false,
@@ -75,15 +95,18 @@
       },
       {
         "system": false,
-        "id": "ui0fpyky",
+        "id": "gm9op4bh",
         "name": "thumbnail",
-        "type": "url",
-        "required": false,
+        "type": "file",
+        "required": true,
         "presentable": false,
         "unique": false,
         "options": {
-          "exceptDomains": null,
-          "onlyDomains": null
+          "maxSelect": 1,
+          "maxSize": 5242880,
+          "mimeTypes": [],
+          "thumbs": [],
+          "protected": false
         }
       },
       {
@@ -105,7 +128,7 @@
         "id": "wtu3fs7h",
         "name": "user",
         "type": "relation",
-        "required": false,
+        "required": true,
         "presentable": false,
         "unique": false,
         "options": {
@@ -121,12 +144,12 @@
         "id": "ku39lfjv",
         "name": "video",
         "type": "file",
-        "required": false,
+        "required": true,
         "presentable": false,
         "unique": false,
         "options": {
           "maxSelect": 1,
-          "maxSize": 5242880,
+          "maxSize": 100000000,
           "mimeTypes": [],
           "thumbs": [],
           "protected": false
@@ -136,8 +159,8 @@
     "indexes": [],
     "listRule": "",
     "viewRule": "",
-    "createRule": "",
-    "updateRule": "",
+    "createRule": "@request.auth.id != \"\"",
+    "updateRule": "@request.auth.id ?= @collection.videos.user",
     "deleteRule": "",
     "options": {}
   }
