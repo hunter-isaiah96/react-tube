@@ -10,6 +10,12 @@ import { UsersResponse } from "../pocketbase-types"
 import { useAppSelector } from "@/store/store"
 import db from "../helpers/connect"
 import { LoadingButton } from "@mui/lab"
+import { Metadata } from "next"
+
+// export const metadata: Metadata = {
+//   title: "Upload",
+//   description: "",
+// }
 
 const Upload = () => {
   const router = useRouter()
@@ -67,6 +73,7 @@ const Upload = () => {
       formData.append("user", user.id)
       const videoRecord = await db.client.collection("videos").create(formData)
       router.push(`/video/${videoRecord.id}`)
+      router.refresh()
     } catch (e) {
     } finally {
       setUploading(false)

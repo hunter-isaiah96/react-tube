@@ -1,25 +1,47 @@
+import { cache } from "react"
+// External styles
 import "./style.scss"
+
+// Next.js
+import { Metadata } from "next"
+
+// Custom helpers
 import db from "@/app/helpers/connect"
+
+// Material-UI components
 import { Grid, List, Typography } from "@mui/material"
+
+// Custom components
 import PlayListItem from "@/app/components/playlist/PlayListItem"
 import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"
-import { Metadata } from "next"
 import CommentsWrapper from "@/app/components/video/comments-section/CommentsWrapper"
+import VideoPlayer from "@/app/components/video/video-player/video-player"
 
 type IVideo = {
   params: {
     id: string
   }
 }
+db.client.autoCancellation(false)
 
-export const metadata: Metadata = {
-  title: "",
-  description: "",
+export const getVideoMetaData = cache(async (id: string) => {
+  const video = await db.getVideo(id)
+  return {
+    title: video.title,
+  }
+})
+
+export async function generateMetadata({ params }: IVideo): Promise<Metadata> {
+  const video = await getVideoMetaData(params.id)
+  return {
+    title: video.title,
+  }
 }
 
 async function Video({ params }: IVideo) {
   const video = await db.getVideo(params.id)
-  metadata.title = video.title
+
+  // console.log(video)
   return (
     <>
       <Grid
@@ -30,11 +52,7 @@ async function Video({ params }: IVideo) {
           item
           xs={9}
         >
-          <video
-            className='video-player'
-            src={db.getFile({ collectionId: video.collectionId, recordId: video.id, fileName: video.video })}
-            controls
-          ></video>
+          <VideoPlayer src={db.getFile({ collectionId: video.collectionId, recordId: video.id, fileName: video.video })}></VideoPlayer>
           <Typography
             variant='h6'
             marginY={1}
@@ -60,3 +78,4 @@ async function Video({ params }: IVideo) {
 }
 
 export default Video
+// export const fetchCache = "default-no-store"

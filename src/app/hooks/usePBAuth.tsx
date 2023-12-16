@@ -13,7 +13,7 @@ function usePBAuth() {
   useEffect(() => {
     db.client.authStore.loadFromCookie(getCookie("pb_auth") || "")
     dispatch(setUser(db.client.authStore.model as UsersResponse))
-  }, [])
+  })
 }
 
 export default usePBAuth

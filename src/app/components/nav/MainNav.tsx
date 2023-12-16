@@ -5,17 +5,25 @@ import { Menu as MenuIcon, VideoCallOutlined } from "@mui/icons-material"
 import { usePathname, useRouter } from "next/navigation"
 import SearchBar from "./SearchBar"
 import NavDrawer from "./NavDrawer"
-import ProfileMenu from "./ProfileMenu"
+import ProfileMenu from "./profileMenu/ProfileMenu"
 import { useAppSelector } from "@/store/store"
+import Link from "next/link"
 
 export default function MainNav() {
   const currentPath = usePathname()
   const router = useRouter()
-  const [mobileOpen, setMobileOpen] = useState<boolean>(false)
+  const [drawerOpen, setdrawerOpen] = useState<boolean>(false)
   const user = useAppSelector((state) => state.authReducer.value.user)
+
   const handleMenuToggle = () => {
-    setMobileOpen(!mobileOpen)
+    setdrawerOpen(!drawerOpen)
   }
+
+  const handleHomeButton = () => {
+    router.push("/")
+    router.refresh()
+  }
+
   const disabledRoutes = ["/login", "/register"]
 
   const EqualBox = styled(Box)(({ theme }) => ({
@@ -37,7 +45,7 @@ export default function MainNav() {
                   color='inherit'
                   aria-label='menu'
                   sx={{ mr: 2 }}
-                  onClick={() => handleMenuToggle()}
+                  onClick={handleMenuToggle}
                 >
                   <MenuIcon />
                 </IconButton>
@@ -45,6 +53,7 @@ export default function MainNav() {
                   variant='h6'
                   component='div'
                   sx={{ marginRight: 2 }}
+                  onClick={handleHomeButton}
                 >
                   ReactTube
                 </Typography>
@@ -69,7 +78,7 @@ export default function MainNav() {
           </AppBar>
           <Toolbar />
           <NavDrawer
-            mobileOpen={mobileOpen}
+            drawerOpen={drawerOpen}
             toggleMenu={handleMenuToggle}
           />
         </>

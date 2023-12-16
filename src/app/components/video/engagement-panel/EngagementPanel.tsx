@@ -67,7 +67,7 @@ export default function EngagementPanel(props: Video) {
               <Avatar src={db.getFile({ collectionId: video.expand.user.collectionId, recordId: video.expand.user.id, fileName: video.expand.user.avatar })}></Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={video.expand.user.name}
+              primary={video.expand.user.username}
               secondary='1.2M Subscribers'
             />
           </ListItem>

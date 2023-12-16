@@ -1,21 +1,26 @@
 "use client"
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
+import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 import { HomeOutlined, SubscriptionsOutlined, CameraRollOutlined } from "@mui/icons-material"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 type NavDrawerType = {
-  mobileOpen: boolean
+  drawerOpen: boolean
   toggleMenu: Function
 }
 export default function NavDrawer(props: NavDrawerType) {
   const drawerWidth = 300
+  const router = useRouter()
   const navigationItems = [
     { title: "Home", icon: <HomeOutlined />, to: "/" },
     { title: "Shorts", icon: <CameraRollOutlined />, to: "/" },
     { title: "Subscriptions", icon: <SubscriptionsOutlined />, to: "/" },
   ]
+  const handleRouteCLick = (route: string) => {
+    router.push(route)
+    router.refresh()
+  }
   return (
     <Drawer
-      open={props.mobileOpen}
+      open={props.drawerOpen}
       onClose={() => props.toggleMenu()}
       ModalProps={{
         keepMounted: true, // Better open performance on mobile.
@@ -28,17 +33,16 @@ export default function NavDrawer(props: NavDrawerType) {
     >
       <List onClick={() => props.toggleMenu()}>
         {navigationItems.map((item, index) => (
-          <Link
-            key={item.title}
-            href={item.to}
+          <ListItem
+            key={index}
+            disablePadding
+            onClick={() => handleRouteCLick(item.to)}
           >
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.title} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
+            <ListItemButton>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.title} />
+            </ListItemButton>
+          </ListItem>
         ))}
       </List>
       <Divider />
