@@ -2,25 +2,41 @@
 import { Avatar, FormControl, Grid, Input, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material"
 import PillButton from "../../ui/PillButton"
 import { useState } from "react"
-import { UsersResponse } from "@/app/pocketbase-types"
+import { CommentsResponse, UsersResponse } from "@/app/pocketbase-types"
 import { useAppSelector } from "@/store/store"
 import db from "@/app/helpers/connect"
+import { useParams } from "next/navigation"
+interface SubmitCommentProps {
+  addComment: (newComment: CommentsResponse) => void
+}
 
-export default function SubmitComment() {
-  const [commentsEnabled, setCommentsEnabled] = useState(false)
-  const [comment, setComment] = useState("")
+export default function SubmitComment({ addComment }: SubmitCommentProps) {
+  const params = useParams()
+
+  const [commentsEnabled, setCommentsEnabled] = useState<boolean>(false)
+  const [comment, setComment] = useState<string>("")
   const user: UsersResponse | false = useAppSelector((state) => state.authReducer.value.user)
 
-  const handleCommentSubmit = () => {
-    // Logic to handle comment submission goes here
-    // For now, let's keep it empty
+  const handleCommentSubmit = async () => {
+    // Create a new comment object
+    if (!user) return
+    try {
+      const newComment = (await db.client.collection("comments").create(
+        {
+          user: user.id,
+          comment: comment,
+          video: params.id,
+        },
+        { expand: "user" }
+      )) as CommentsResponse
+      addComment(newComment)
+      setComment("")
+      setCommentsEnabled(false)
+    } catch (e) {}
   }
 
   return (
     <div>
-      <ListItemText sx={{ marginY: 2 }}>
-        <Typography variant='h6'>134 Comments</Typography>
-      </ListItemText>
       <ListItem disablePadding>
         <ListItemAvatar>
           <Avatar src={user ? db.getFile({ collectionId: user.collectionId, recordId: user.id, fileName: user.avatar }) : ""} />

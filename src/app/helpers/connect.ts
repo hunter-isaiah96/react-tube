@@ -1,5 +1,5 @@
 import PocketBase, { ListResult } from "pocketbase"
-import { Collections, UsersResponse, type VideosUsersResponse } from "@/app/pocketbase-types"
+import { Collections, CommentsResponse, UsersResponse, type VideosUsersResponse } from "@/app/pocketbase-types"
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 
 export const POCKET_BASE_URL = "http://127.0.0.1:8090"
@@ -38,6 +38,15 @@ class DBClient {
   async getVideo(videoId: string): Promise<VideosUsersResponse> {
     return this.client.collection(Collections.Videos).getFirstListItem<VideosUsersResponse>(`id ~ "${videoId}"`, { expand: "user" })
   }
+
+  async getComments(videoId: string): Promise<ListResult<CommentsResponse>> {
+    return this.client.collection(Collections.Comments).getList<CommentsResponse>(1, 20, {
+      filter: `video="${videoId}"`,
+      expand: "user",
+      sort: "-created",
+    })
+  }
+
   getFile(file: File) {
     return file.fileName ? `${this.client.baseUrl}/api/files/${file.collectionId}/${file.recordId}/${file.fileName}` : ""
   }

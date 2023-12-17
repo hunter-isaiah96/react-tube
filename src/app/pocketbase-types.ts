@@ -6,6 +6,8 @@ import type PocketBase from "pocketbase"
 import type { RecordService } from "pocketbase"
 
 export enum Collections {
+  Comments = "comments",
+  Likesdislikes = "likesdislikes",
   Users = "users",
   Videos = "videos",
 }
@@ -34,31 +36,51 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export type CommentsRecord = {
+  comment: string
+  reply_to?: RecordIdString
+  user: RecordIdString
+  video: RecordIdString
+}
+
+export type LikesdislikesRecord = {
+  isLike: boolean
+  user: RecordIdString
+  video: RecordIdString
+}
+
 export type UsersRecord = {
   avatar?: string
-  name?: string
 }
 
 export type VideosRecord = {
-  thumbnail?: string
-  title?: string
-  user?: RecordIdString
-  video?: string
+  description?: string
+  thumbnail: string
+  title: string
+  user: RecordIdString
+  video: string
   views?: number
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type CommentsResponse<Texpand = unknown> = Required<CommentsRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
+export type LikesdislikesResponse<Texpand = unknown> = Required<LikesdislikesRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type VideosResponse<Texpand = unknown> = Required<VideosRecord> & BaseSystemFields<Texpand>
 export type VideosUsersResponse<Texpand = unknown> = Required<VideosRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
+
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+  comments: CommentsRecord
+  likesdislikes: LikesdislikesRecord
   users: UsersRecord
   videos: VideosRecord
 }
 
 export type CollectionResponses = {
+  comments: CommentsResponse
+  likesdislikes: LikesdislikesResponse
   users: UsersResponse
   videos: VideosResponse
 }
@@ -67,6 +89,8 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+  collection(idOrName: "comments"): RecordService<CommentsResponse>
+  collection(idOrName: "likesdislikes"): RecordService<LikesdislikesResponse>
   collection(idOrName: "users"): RecordService<UsersResponse>
   collection(idOrName: "videos"): RecordService<VideosResponse>
 }

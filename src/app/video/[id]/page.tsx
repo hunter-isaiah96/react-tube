@@ -38,10 +38,11 @@ export async function generateMetadata({ params }: IVideo): Promise<Metadata> {
   }
 }
 
-async function Video({ params }: IVideo) {
-  const video = await db.getVideo(params.id)
+export default async function Video({ params }: IVideo) {
+  const videoData = db.getVideo(params.id)
+  const commentsData = db.getComments(params.id)
+  const [video, { items: comments, totalItems: totalComments }] = await Promise.all([videoData, commentsData])
 
-  // console.log(video)
   return (
     <>
       <Grid
@@ -60,7 +61,10 @@ async function Video({ params }: IVideo) {
             {video.title}
           </Typography>
           <EngagementPanel video={video}></EngagementPanel>
-          <CommentsWrapper></CommentsWrapper>
+          <CommentsWrapper
+            initialComments={comments}
+            totalComments={totalComments}
+          ></CommentsWrapper>
         </Grid>
         <Grid
           item
@@ -76,6 +80,4 @@ async function Video({ params }: IVideo) {
     </>
   )
 }
-
-export default Video
-// export const fetchCache = "default-no-store"
+export const fetchCache = "default-no-store"

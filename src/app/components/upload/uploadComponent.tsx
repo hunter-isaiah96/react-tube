@@ -2,7 +2,7 @@
 import { PreviewImage, base64ToBlob } from "@/app//helpers/video"
 import { useState, useRef, ChangeEvent } from "react"
 import { useRouter } from "next/navigation"
-import { Box, Grid, TextField } from "@mui/material"
+import { Autocomplete, Box, Chip, Grid, TextField } from "@mui/material"
 import { CircularProgress } from "@mui/joy"
 import { UsersResponse } from "@/app/pocketbase-types"
 import { useAppSelector } from "@/store/store"
@@ -16,6 +16,7 @@ export default function UploadComponent() {
   const router = useRouter()
   const [title, setTitle] = useState<string>("")
   const [description, setDescription] = useState<string>("")
+  const [tags, setTags] = useState<string[]>([])
   const [videoFile, setVideoFile] = useState<Blob | null>(null)
   const [videoSrc, setVideoSrc] = useState<string>("")
   const [isUploading, setUploading] = useState<boolean>(false)
@@ -74,7 +75,7 @@ export default function UploadComponent() {
         <Grid
           container
           spacing={2}
-          marginBottom={2}
+          marginBottom={1}
         >
           <Grid
             item
@@ -118,26 +119,46 @@ export default function UploadComponent() {
             ></VideoThumbnails>
           </Box>
         ) : null}
-
-        <Box marginBottom={1}>
-          <TextField
-            label='Title'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            fullWidth
-          />
-        </Box>
-        <Box marginBottom={1}>
-          <TextField
-            multiline
-            minRows={2}
-            rows={4}
-            label='Description'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            fullWidth
-          />
-        </Box>
+        <TextField
+          label='Title'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          fullWidth
+        />
+        <TextField
+          multiline
+          rows={4}
+          label='Description'
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          margin='normal'
+          fullWidth
+        />
+        <Autocomplete
+          multiple
+          onChange={(e, value) => setTags((state) => value)}
+          options={[]}
+          value={tags}
+          freeSolo
+          renderTags={(value: readonly string[], getTagProps) =>
+            value.map((option: string, index: number) => (
+              <Chip
+                variant='outlined'
+                label={option}
+                {...getTagProps({ index })}
+                key={index}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label='Tags'
+              placeholder='Favorites'
+              margin='dense'
+            />
+          )}
+        />
         <LoadingButton
           onClick={uploadVideo}
           variant='contained'

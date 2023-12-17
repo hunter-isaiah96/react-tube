@@ -1,19 +1,19 @@
 import { Card, CardContent, CardMedia, Typography, Grid, Avatar, CardActionArea } from "@mui/material"
 import { type VideosUsersResponse } from "@/app/pocketbase-types"
 import db from "@/app/helpers/connect"
-import moment from "moment"
 import Link from "next/link"
+import Moment from "react-moment"
 
-export default function VideoPreview(props: { video: VideosUsersResponse }) {
+export default function VideoPreview({ video }: { video: VideosUsersResponse }) {
   return (
     <Card>
-      <Link href={`/video/${props.video.id}`}>
+      <Link href={`/video/${video.id}`}>
         <CardActionArea>
           <CardMedia
             component='img'
             alt='green iguana'
             height={180}
-            image={db.getFile({ collectionId: props.video.collectionId, recordId: props.video.id, fileName: props.video.thumbnail })}
+            image={db.getFile({ collectionId: video.collectionId, recordId: video.id, fileName: video.thumbnail })}
           />
           <CardContent>
             <Grid container>
@@ -22,8 +22,8 @@ export default function VideoPreview(props: { video: VideosUsersResponse }) {
                 sx={{ marginRight: 2 }}
               >
                 <Avatar
-                  alt={`${props.video.expand.user.name}'s avatar`}
-                  src={db.getFile({ collectionId: props.video.expand.user.collectionId, recordId: props.video.expand.user.id, fileName: props.video.expand.user.avatar })}
+                  alt={`${video.expand.user.username}'s avatar`}
+                  src={db.getFile({ collectionId: video.expand.user.collectionId, recordId: video.expand.user.id, fileName: video.expand.user.avatar })}
                 />
               </Grid>
               <Grid
@@ -38,19 +38,23 @@ export default function VideoPreview(props: { video: VideosUsersResponse }) {
                   sx={{ marginBottom: 0 }}
                   noWrap
                 >
-                  {props.video.title}
+                  {video.title}
                 </Typography>
                 <Typography
                   variant='body2'
                   color='text.secondary'
                 >
-                  {props.video.expand.user.name}
+                  {video.expand.user.username}
                 </Typography>
                 <Typography
                   variant='body2'
                   color='text.secondary'
                 >
-                  {props.video.views} views &#x2022; {moment(props.video.created).fromNow()}
+                  {video.views} views &#x2022;{" "}
+                  <Moment
+                    date={video.created}
+                    fromNow
+                  />
                 </Typography>
               </Grid>
             </Grid>
