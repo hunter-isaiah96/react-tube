@@ -7,7 +7,6 @@ import SearchBar from "./SearchBar"
 import NavDrawer from "./NavDrawer"
 import ProfileMenu from "./profileMenu/ProfileMenu"
 import { useAppSelector } from "@/store/store"
-import Link from "next/link"
 
 export default function MainNav() {
   const currentPath = usePathname()
@@ -17,11 +16,6 @@ export default function MainNav() {
 
   const handleMenuToggle = () => {
     setdrawerOpen(!drawerOpen)
-  }
-
-  const handleHomeButton = () => {
-    router.push("/")
-    router.refresh()
   }
 
   const disabledRoutes = ["/login", "/register"]
@@ -53,7 +47,6 @@ export default function MainNav() {
                   variant='h6'
                   component='div'
                   sx={{ marginRight: 2 }}
-                  onClick={handleHomeButton}
                 >
                   ReactTube
                 </Typography>

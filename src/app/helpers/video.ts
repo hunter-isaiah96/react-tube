@@ -1,7 +1,7 @@
-import { Faker, faker } from "@faker-js/faker"
+import { faker } from "@faker-js/faker"
 
 export type PreviewImage = {
-  id: number
+  id: string
   image: string
 }
 
@@ -59,7 +59,7 @@ export const getThumbnails = (videoSrc: string): Promise<PreviewImage[]> => {
           reader.readAsDataURL(blob)
           reader.onloadend = () => {
             const base64data = reader.result as string
-            resolve({ id: faker.number.int(), image: base64data })
+            resolve({ id: faker.number.int().toString(), image: base64data })
           }
         })
         .catch((error) => {
