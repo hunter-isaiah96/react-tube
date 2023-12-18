@@ -34,7 +34,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
-    "react-moment": "^1.1.3",
     "react-redux": "^9.0.2",
     "sass": "^1.69.5",
     "typescript-cookie": "^1.0.6"

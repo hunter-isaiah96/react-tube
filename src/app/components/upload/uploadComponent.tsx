@@ -1,6 +1,6 @@
 "use client"
 import { PreviewImage, base64ToBlob } from "@/app//helpers/video"
-import { useState, useRef, ChangeEvent } from "react"
+import { useState, useRef, ChangeEvent, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Autocomplete, Box, Chip, Grid, TextField } from "@mui/material"
 import { CircularProgress } from "@mui/joy"
@@ -10,6 +10,8 @@ import db from "@/app//helpers/connect"
 import { LoadingButton } from "@mui/lab"
 import FileUploader from "@/app/components/upload/fileUploader"
 import VideoThumbnails from "@/app/components/upload/videoThumbnails"
+
+// Import necessary modules and dependencies...
 
 export default function UploadComponent() {
   // State variables using useState hook
@@ -23,26 +25,34 @@ export default function UploadComponent() {
   const [loadingVideo, setLoadingVideo] = useState<boolean>(false)
   const [videoThumbnails, setVideoThumbnails] = useState<PreviewImage[]>([])
   const [selectedThumbnail, setSelectedThumbnail] = useState<string>("")
+
   // useRef hook
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const user: UsersResponse | false = useAppSelector((state) => state.authReducer.value.user)
 
+  // Function invoked when a file is dropped for upload
   const onDropped = (file: File, src: string, thumbnails: PreviewImage[]) => {
     setVideoSrc(src)
     setVideoFile(file)
     setTitle(file.name.split(".")[0])
-    setVideoThumbnails(thumbnails)
+    setVideoThumbnails([...thumbnails, { id: "custom", image: "" }])
     setSelectedThumbnail(thumbnails[0].id)
-    if (videoRef.current) {
-      videoRef.current.load()
-    }
     setLoadingVideo(false)
   }
 
+  // Effect hook to update video source when videoSrc changes
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.src = videoSrc
+    }
+  }, [videoSrc])
+
+  // Function to handle thumbnail selection
   const handleThumbnailSelection = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedThumbnail(event.target.value)
   }
 
+  // Function to upload the video
   const uploadVideo = async () => {
     try {
       let thumb = videoThumbnails.find((thumbnail) => thumbnail.id == selectedThumbnail)
@@ -53,11 +63,13 @@ export default function UploadComponent() {
       formData.append("title", title)
       formData.append("description", description)
       formData.append("thumbnail", base64ToBlob(thumb.image.split(",")[1]))
+      formData.append("tags", JSON.stringify(tags))
       formData.append("user", user.id)
       const videoRecord = await db.client.collection("videos").create(formData)
       router.push(`/video/${videoRecord.id}`)
       router.refresh()
     } catch (e) {
+      // Error handling if upload fails
     } finally {
       setUploading(false)
     }
@@ -77,6 +89,7 @@ export default function UploadComponent() {
           spacing={2}
           marginBottom={1}
         >
+          {/* File uploader component */}
           <Grid
             item
             xs={6}
@@ -86,6 +99,7 @@ export default function UploadComponent() {
               onDropped={onDropped}
             ></FileUploader>
           </Grid>
+          {/* Video display area */}
           <Grid
             item
             xs={6}
@@ -99,10 +113,6 @@ export default function UploadComponent() {
                 ref={videoRef}
                 controls
               >
-                <source
-                  src={videoSrc}
-                  type='video/mp4'
-                />
                 Your browser does not support the video tag.
               </video>
             ) : loadingVideo ? (
@@ -110,21 +120,26 @@ export default function UploadComponent() {
             ) : null}
           </Grid>
         </Grid>
+        {/* Video thumbnails component */}
         {videoThumbnails.length > 0 ? (
           <Box marginBottom={1}>
             <VideoThumbnails
               selectedThumbnail={selectedThumbnail}
+              setSelectedThumbnail={setSelectedThumbnail}
               handleThumbnailSelection={handleThumbnailSelection}
+              setVideoThumbnails={setVideoThumbnails}
               videoThumbnails={videoThumbnails}
             ></VideoThumbnails>
           </Box>
         ) : null}
+        {/* Title text field */}
         <TextField
           label='Title'
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           fullWidth
         />
+        {/* Description text field */}
         <TextField
           multiline
           rows={4}
@@ -134,6 +149,7 @@ export default function UploadComponent() {
           margin='normal'
           fullWidth
         />
+        {/* Tags autocomplete component */}
         <Autocomplete
           multiple
           onChange={(e, value) => setTags((state) => value)}
@@ -154,11 +170,11 @@ export default function UploadComponent() {
             <TextField
               {...params}
               label='Tags'
-              placeholder='Favorites'
               margin='dense'
             />
           )}
         />
+        {/* Upload button */}
         <LoadingButton
           onClick={uploadVideo}
           variant='contained'

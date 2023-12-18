@@ -2,7 +2,7 @@ import { Card, CardContent, CardMedia, Typography, Grid, Avatar, CardActionArea 
 import { type VideosUsersResponse } from "@/app/pocketbase-types"
 import db from "@/app/helpers/connect"
 import Link from "next/link"
-import Moment from "react-moment"
+import moment from "moment"
 
 export default function VideoPreview({ video }: { video: VideosUsersResponse }) {
   return (
@@ -50,11 +50,7 @@ export default function VideoPreview({ video }: { video: VideosUsersResponse }) 
                   variant='body2'
                   color='text.secondary'
                 >
-                  {video.views} views &#x2022;{" "}
-                  <Moment
-                    date={video.created}
-                    fromNow
-                  />
+                  {video.views} views &#x2022; {moment(video.created).fromNow()}
                 </Typography>
               </Grid>
             </Grid>

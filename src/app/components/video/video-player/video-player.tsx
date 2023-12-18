@@ -17,12 +17,34 @@ export default function VideoPlayer(props: VideoPlayerProps) {
     }
   }, [time])
 
+  useEffect(() => {
+    const videoPlayerRef = videoPlayer.current // Capture the current value in a local variable
+
+    const handleCanPlay = () => {
+      if (videoPlayerRef) {
+        videoPlayerRef.muted = false
+      }
+    }
+
+    if (videoPlayerRef) {
+      videoPlayerRef.addEventListener("canplay", handleCanPlay)
+    }
+
+    return () => {
+      if (videoPlayerRef) {
+        videoPlayerRef.removeEventListener("canplay", handleCanPlay)
+      }
+    }
+  }, [])
+
   return (
     <video
       id='videoPlayer'
       className='video-player'
       ref={videoPlayer}
       src={props.src}
+      muted
+      autoPlay
       controls
     ></video>
   )

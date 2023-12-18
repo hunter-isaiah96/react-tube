@@ -47,7 +47,7 @@ export const getThumbnail = (videoSrc: string, percentage: number): Promise<Blob
 }
 
 export const getThumbnails = (videoSrc: string): Promise<PreviewImage[]> => {
-  const percentages = [0, 25, 50, 75]
+  const percentages = [25, 50, 75]
   const promises: Promise<PreviewImage>[] = []
 
   const processThumbnail = (percentage: number) => {
@@ -74,6 +74,17 @@ export const getThumbnails = (videoSrc: string): Promise<PreviewImage[]> => {
   })
 
   return Promise.all(promises)
+}
+
+export const blobToBase64 = (blob: Blob): Promise<string> => {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onloadend = () => {
+      const base64data = reader.result as string
+      resolve(base64data)
+    }
+  })
 }
 
 export const base64ToBlob = (base64String: string, contentType = "image/jpeg") => {

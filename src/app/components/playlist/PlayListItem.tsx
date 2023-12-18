@@ -1,11 +1,15 @@
 import { ListItem, ListItemText, Typography } from "@mui/material"
 import Image from "next/image"
-import { faker } from "@faker-js/faker"
 import Link from "next/link"
-
-export default function PlayListItem() {
+import { VideosUsersResponse } from "@/app/pocketbase-types"
+import moment from "moment"
+import db from "@/app/helpers/connect"
+type PlayListItemProps = {
+  video: VideosUsersResponse
+}
+export default function PlayListItem({ video }: PlayListItemProps) {
   return (
-    <Link href='#'>
+    <Link href={`/video/${video.id}`}>
       <ListItem alignItems='flex-start'>
         <Image
           unoptimized
@@ -13,7 +17,8 @@ export default function PlayListItem() {
           height='0'
           className='recommended-thumbnail'
           alt='video thumbnail'
-          src={faker.image.urlLoremFlickr({ category: "nature" })}
+          src={db.getFile({ collectionId: video.collectionId, recordId: video.id, fileName: video.thumbnail })}
+          style={{ objectFit: "contain" }}
         ></Image>
         <ListItemText
           sx={{ marginLeft: 1 }}
@@ -22,7 +27,7 @@ export default function PlayListItem() {
               variant='subtitle2'
               className='text-ellipsis two-line capitalize'
             >
-              {faker.word.words({ count: { min: 5, max: 10 } })}
+              {video.title}
             </Typography>
           }
           secondary={
@@ -31,13 +36,13 @@ export default function PlayListItem() {
                 className='text-ellipsis'
                 variant='caption'
               >
-                rhynoboy2009
+                {video.expand.user.username}
               </Typography>
               <Typography
                 className='text-ellipsis'
                 variant='caption'
               >
-                100k views &#x2022; 2 Days ago
+                {video.views} views &#x2022; {moment(video.created).fromNow()}
               </Typography>
             </>
           }

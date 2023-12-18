@@ -16,6 +16,8 @@ import PlayListItem from "@/app/components/playlist/PlayListItem"
 import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"
 import CommentsWrapper from "@/app/components/video/comments-section/CommentsWrapper"
 import VideoPlayer from "@/app/components/video/video-player/video-player"
+import { ListResult } from "pocketbase"
+import { VideosUsersResponse } from "@/app/pocketbase-types"
 
 type IVideo = {
   params: {
@@ -42,6 +44,25 @@ export default async function Video({ params }: IVideo) {
   const videoData = db.getVideo(params.id)
   const commentsData = db.getComments(params.id)
   const [video, { items: comments, totalItems: totalComments }] = await Promise.all([videoData, commentsData])
+
+  const titleKeywords: string[] = video.title
+    .toLowerCase()
+    .split(" ")
+    .map((keyword) => `title ~ "${keyword}"`)
+
+  const recommendationFilters = {
+    filter: `id != "${video.id}" && (${titleKeywords.join("||")})`, // Ensures excluding the video with the same ID
+    expand: "user",
+    sort: "@random",
+  }
+
+  if (video.tags && video.tags.length > 0) {
+    recommendationFilters.filter = recommendationFilters.filter.slice(0, -1)
+    const tagFilters: string[] = video.tags.map((tag) => `tags ~ "${tag}"`)
+    recommendationFilters.filter += ` || ${tagFilters.join(" || ")})` // Combining tag filters using OR (||)
+  }
+
+  const { items: similarVideos }: ListResult<VideosUsersResponse> = await db.client.collection("videos").getList(1, 20, recommendationFilters)
 
   return (
     <>
@@ -71,8 +92,11 @@ export default async function Video({ params }: IVideo) {
           xs={3}
         >
           <List sx={{ overflow: "hidden" }}>
-            {Array.from({ length: 20 }).map((item, index) => (
-              <PlayListItem key={index}></PlayListItem>
+            {similarVideos.map((video: VideosUsersResponse) => (
+              <PlayListItem
+                key={video.id}
+                video={video}
+              ></PlayListItem>
             ))}
           </List>
         </Grid>

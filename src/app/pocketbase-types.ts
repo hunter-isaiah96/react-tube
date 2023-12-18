@@ -53,8 +53,9 @@ export type UsersRecord = {
   avatar?: string
 }
 
-export type VideosRecord = {
+export type VideosRecord<Ttags = string[] | undefined> = {
   description?: string
+  tags?: null | Ttags
   thumbnail: string
   title: string
   user: RecordIdString
@@ -63,10 +64,10 @@ export type VideosRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type CommentsResponse<Texpand = unknown> = Required<CommentsRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
 export type LikesdislikesResponse<Texpand = unknown> = Required<LikesdislikesRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type VideosResponse<Texpand = unknown> = Required<VideosRecord> & BaseSystemFields<Texpand>
+export type CommentsResponse<Texpand = unknown> = Required<CommentsRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
 export type VideosUsersResponse<Texpand = unknown> = Required<VideosRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
 
 // Types containing all Records and Responses, useful for creating typing helper functions

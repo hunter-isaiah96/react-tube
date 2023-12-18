@@ -2,7 +2,8 @@
 import db from "@/app/helpers/connect"
 import { CommentsResponse } from "@/app/pocketbase-types"
 import { Avatar, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material"
-import Moment from "react-moment"
+import moment from "moment"
+
 type UserComment = {
   comment: CommentsResponse
 }
@@ -24,12 +25,7 @@ export default function Comment({ comment }: UserComment) {
         primary={
           <>
             <Typography variant='subtitle2'>
-              @{comment.expand.user.username}{" "}
-              <Moment
-                date={comment.created}
-                style={{ fontWeight: "normal" }}
-                fromNow
-              />
+              @{comment.expand.user.username} {moment(comment.created).fromNow()}
             </Typography>
           </>
         }
