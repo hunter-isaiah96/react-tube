@@ -1,18 +1,13 @@
 "use client"
-import { PreviewImage } from "@/app/helpers/video"
 import { CloudUpload } from "@mui/icons-material"
 import { Box, Typography } from "@mui/material"
 import { useCallback, useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { blobToBase64 } from "@/app/helpers/video"
-type CustomThumbnailProps = {
-  selectedThumbnail: string
-  setSelectedThumbnail: (id: string) => void
-  setVideoThumbnails: (thumbnails: PreviewImage[]) => void
-  videoThumbnails: PreviewImage[]
-}
+import { useUploadVideoStore } from "@/app/zustand/uploadVideo"
 
-export default function CustomThumbnail({ selectedThumbnail, setSelectedThumbnail, setVideoThumbnails, videoThumbnails }: CustomThumbnailProps) {
+export default function CustomThumbnail() {
+  const { selectedThumbnail, setSelectedThumbnail, setVideoThumbnails, videoThumbnails } = useUploadVideoStore()
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const updatedThumbnails = [...videoThumbnails]

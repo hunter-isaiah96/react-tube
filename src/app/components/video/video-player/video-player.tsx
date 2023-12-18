@@ -22,7 +22,11 @@ export default function VideoPlayer(props: VideoPlayerProps) {
 
     const handleCanPlay = () => {
       if (videoPlayerRef) {
-        videoPlayerRef.muted = false
+        setTimeout(() => {
+          videoPlayerRef.muted = false
+          videoPlayerRef.controls = true
+          videoPlayerRef.volume = 0.3
+        }, 50)
       }
     }
 
@@ -45,7 +49,6 @@ export default function VideoPlayer(props: VideoPlayerProps) {
       src={props.src}
       muted
       autoPlay
-      controls
     ></video>
   )
 }

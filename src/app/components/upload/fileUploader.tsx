@@ -4,20 +4,27 @@ import { useDropzone } from "react-dropzone"
 import { useCallback } from "react"
 import { CloudUpload } from "@mui/icons-material"
 import { getThumbnails } from "@/app/helpers/video"
-type FileUploaderProps = {
-  onDropped: Function
-  setLoadingVideo: Function
-}
-export default function FileUploader({ onDropped, setLoadingVideo }: FileUploaderProps) {
+import { useUploadVideoStore } from "@/app/zustand/uploadVideo"
+
+export default function FileUploader() {
+  const { setVideoFile, setVideoThumbnails, setLoadingVideo, setTitle, setSelectedThumbnail } = useUploadVideoStore()
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setLoadingVideo(true)
-      const file = acceptedFiles[0]
-      const src = URL.createObjectURL(file)
-      const thumbnails = await getThumbnails(src)
-      onDropped(acceptedFiles[0], src, thumbnails)
+      try {
+        setLoadingVideo(true)
+        const file = acceptedFiles[0]
+        const src = URL.createObjectURL(file)
+        const thumbnails = await getThumbnails(src)
+        setVideoFile(acceptedFiles[0])
+        setTitle(file.name.split(".")[0])
+        setVideoThumbnails([...thumbnails, { id: "custom", image: "" }])
+        setSelectedThumbnail(thumbnails[0].id)
+      } catch (error) {
+      } finally {
+        setLoadingVideo(false)
+      }
     },
-    [onDropped, setLoadingVideo]
+    [setVideoFile, setVideoThumbnails, setLoadingVideo, setTitle, setSelectedThumbnail]
   )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
