@@ -8,6 +8,7 @@ import type { RecordService } from "pocketbase"
 export enum Collections {
   Comments = "comments",
   Likesdislikes = "likesdislikes",
+  Subscriptions = "subscriptions",
   Users = "users",
   Videos = "videos",
 }
@@ -49,11 +50,16 @@ export type LikesdislikesRecord = {
   video: RecordIdString
 }
 
+export type SubscriptionsRecord = {
+  subscribedTo: RecordIdString
+  subscriber: RecordIdString
+}
+
 export type UsersRecord = {
   avatar?: string
 }
 
-export type VideosRecord<Ttags = string[] | undefined> = {
+export type VideosRecord<Ttags = []> = {
   description?: string
   tags?: null | Ttags
   thumbnail: string
@@ -64,10 +70,11 @@ export type VideosRecord<Ttags = string[] | undefined> = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type CommentsResponse<Texpand = unknown> = Required<CommentsRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
 export type LikesdislikesResponse<Texpand = unknown> = Required<LikesdislikesRecord> & BaseSystemFields<Texpand>
+export type SubscriptionsResponse<Texpand = unknown> = Required<SubscriptionsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type VideosResponse<Texpand = unknown> = Required<VideosRecord> & BaseSystemFields<Texpand>
-export type CommentsResponse<Texpand = unknown> = Required<CommentsRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
 export type VideosUsersResponse<Texpand = unknown> = Required<VideosRecord> & BaseSystemFields<Texpand> & { expand: { user: UsersResponse } }
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -75,6 +82,7 @@ export type VideosUsersResponse<Texpand = unknown> = Required<VideosRecord> & Ba
 export type CollectionRecords = {
   comments: CommentsRecord
   likesdislikes: LikesdislikesRecord
+  subscriptions: SubscriptionsRecord
   users: UsersRecord
   videos: VideosRecord
 }
@@ -82,6 +90,7 @@ export type CollectionRecords = {
 export type CollectionResponses = {
   comments: CommentsResponse
   likesdislikes: LikesdislikesResponse
+  subscriptions: SubscriptionsResponse
   users: UsersResponse
   videos: VideosResponse
 }
@@ -92,6 +101,7 @@ export type CollectionResponses = {
 export type TypedPocketBase = PocketBase & {
   collection(idOrName: "comments"): RecordService<CommentsResponse>
   collection(idOrName: "likesdislikes"): RecordService<LikesdislikesResponse>
+  collection(idOrName: "subscriptions"): RecordService<SubscriptionsResponse>
   collection(idOrName: "users"): RecordService<UsersResponse>
   collection(idOrName: "videos"): RecordService<VideosResponse>
 }

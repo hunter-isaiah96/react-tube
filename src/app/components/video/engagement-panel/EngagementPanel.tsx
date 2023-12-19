@@ -6,6 +6,7 @@ import { VideosUsersResponse } from "@/app/pocketbase-types"
 import { useReducer, useState } from "react"
 import { CheckCircle, ContentCut, PlaylistAdd, Reply, ThumbDownAlt, ThumbDownAltOutlined, ThumbUpAlt, ThumbUpAltOutlined } from "@mui/icons-material"
 import PillButton from "@/app/components/ui/PillButton"
+import { useAuthStore } from "@/app/zustand/user"
 type Video = {
   video: VideosUsersResponse
 }
@@ -49,11 +50,23 @@ const ratingReducer = (state: RatingState, action: Action): RatingState => {
   }
 }
 
-export default function EngagementPanel(props: Video) {
-  const video = props.video
+export default function EngagementPanel({ video }: Video) {
+  const { user } = useAuthStore()
   const [subscribed, setSubscribed] = useState<boolean>(false)
   const [state, dispatch] = useReducer(ratingReducer, ratingState)
   const { likes, dislikes, isLiked, isDisliked } = state
+
+  const subscribeToUser = async () => {
+    try {
+      if (!subscribed) {
+        const newSubscription = await db.client.collection("subscriptions").create({
+          follower: user?.id,
+          follows: video.user,
+        })
+      }
+      setSubscribed(!subscribed)
+    } catch (e) {}
+  }
 
   return (
     <>
@@ -81,7 +94,7 @@ export default function EngagementPanel(props: Video) {
             color={subscribed ? "success" : "primary"}
             variant='contained'
             onClick={() => {
-              setSubscribed(!subscribed)
+              subscribeToUser()
             }}
           >
             {subscribed ? "Subscribed" : "Subscribe"}

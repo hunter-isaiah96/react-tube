@@ -17,7 +17,7 @@ import EngagementPanel from "@/app/components/video/engagement-panel/EngagementP
 import CommentsWrapper from "@/app/components/video/comments-section/CommentsWrapper"
 import VideoPlayer from "@/app/components/video/video-player/video-player"
 import { ListResult } from "pocketbase"
-import { VideosUsersResponse } from "@/app/pocketbase-types"
+import { VideosResponse, VideosUsersResponse } from "@/app/pocketbase-types"
 
 type IVideo = {
   params: {
@@ -48,7 +48,7 @@ export default async function Video({ params }: IVideo) {
   const titleKeywords: string[] = video.title
     .toLowerCase()
     .split(" ")
-    .map((keyword) => `title ~ "${keyword}"`)
+    .map((keyword: string) => `title ~ "${keyword}"`)
 
   const recommendationFilters = {
     filter: `id != "${video.id}" && (${titleKeywords.join("||")})`, // Ensures excluding the video with the same ID
@@ -58,7 +58,7 @@ export default async function Video({ params }: IVideo) {
 
   if (video.tags && video.tags.length > 0) {
     recommendationFilters.filter = recommendationFilters.filter.slice(0, -1)
-    const tagFilters: string[] = video.tags.map((tag) => `tags ~ "${tag}"`)
+    const tagFilters: string[] = video.tags.map((tag: string) => `tags ~ "${tag}"`)
     recommendationFilters.filter += ` || ${tagFilters.join(" || ")})` // Combining tag filters using OR (||)
   }
 
