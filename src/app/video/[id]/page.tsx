@@ -19,7 +19,7 @@ import VideoPlayer from "@/app/components/video/video-player/video-player"
 import Pocketbase from "pocketbase"
 import { ListResult } from "pocketbase"
 import { cookies } from "next/headers"
-import { VideosUsersResponse } from "@/app/pocketbase-types"
+import { Collections, UsersResponse, VideosUsersResponse } from "@/app/pocketbase-types"
 
 type IVideo = {
   params: {
@@ -46,9 +46,22 @@ export default async function Video({ params }: IVideo) {
   const videoData = db.getVideo(params.id)
   const commentsData = db.getComments(params.id)
   const [video, { items: comments, totalItems: totalComments }] = await Promise.all([videoData, commentsData])
-
+  let subscribed: { subscribed: boolean; id: string | null } = {
+    subscribed: false,
+    id: null,
+  }
   const authCookie = cookies().get("pb_auth")
   const tempPB = new Pocketbase(POCKET_BASE_URL)
+  if (authCookie) {
+    tempPB.authStore.loadFromCookie(authCookie?.value)
+  }
+  try {
+    const user = tempPB.authStore.model as UsersResponse
+    const subscription = await tempPB.collection(Collections.Subscriptions).getFirstListItem(`subscriber = "${user.id}" && subscribedTo = "${video.expand.user.id}"`)
+    subscribed.subscribed = true
+    subscribed.id = subscription.id
+  } catch (error) {}
+
   // create a new one-off install from an existing one
 
   const titleKeywords: string[] = video.title
@@ -89,7 +102,7 @@ export default async function Video({ params }: IVideo) {
           </Typography>
           <EngagementPanel
             video={video}
-            isSubscribed={true}
+            subscription={subscribed}
           ></EngagementPanel>
           <CommentsWrapper
             initialComments={comments}

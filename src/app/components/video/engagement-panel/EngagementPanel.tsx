@@ -9,7 +9,10 @@ import PillButton from "@/app/components/ui/PillButton"
 import { useAuthStore } from "@/app/zustand/user"
 type Video = {
   video: VideosUsersResponse
-  isSubscribed: boolean
+  subscription: {
+    subscribed: boolean
+    id: string | null
+  }
 }
 
 type RatingState = {
@@ -51,21 +54,23 @@ const ratingReducer = (state: RatingState, action: Action): RatingState => {
   }
 }
 
-export default function EngagementPanel({ video, isSubscribed }: Video) {
+export default function EngagementPanel({ video, subscription }: Video) {
   const { user } = useAuthStore()
-  const [subscribed, setSubscribed] = useState<boolean>(isSubscribed)
+  const [subscribed, setSubscribed] = useState<{ subscribed: boolean; id: string | null }>({ subscribed: subscription.subscribed, id: subscription.id })
   const [state, dispatch] = useReducer(ratingReducer, ratingState)
   const { likes, dislikes, isLiked, isDisliked } = state
 
   const subscribeToUser = async () => {
     try {
-      if (!subscribed) {
+      if (!subscribed && !subscription.id) {
         const newSubscription = await db.client.collection("subscriptions").create({
-          follower: user?.id,
-          follows: video.user,
+          subscriber: user?.id,
+          subscribedTo: video.user,
         })
+      } else {
+        if (subscription.id) await db.client.collection("subscriptions").delete(subscription.id)
       }
-      setSubscribed(!subscribed)
+      setSubscribed({})
     } catch (e) {}
   }
 
@@ -91,14 +96,14 @@ export default function EngagementPanel({ video, isSubscribed }: Video) {
           marginLeft={5}
         >
           <PillButton
-            startIcon={subscribed ? <CheckCircle></CheckCircle> : null}
-            color={subscribed ? "success" : "primary"}
+            startIcon={subscribed.subscribed ? <CheckCircle></CheckCircle> : null}
+            color={subscribed.subscribed ? "success" : "primary"}
             variant='contained'
             onClick={() => {
               subscribeToUser()
             }}
           >
-            {subscribed ? "Subscribed" : "Subscribe"}
+            {subscribed.subscribed ? "Subscribed" : "Subscribe"}
           </PillButton>
         </Grid>
         <Grid

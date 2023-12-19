@@ -47,10 +47,6 @@ class DBClient {
     })
   }
 
-  async getSubscription(subscriberId: string, subscribedToId: string): Promise<SubscriptionsResponse> {
-    return this.client.collection(Collections.Subscriptions).getFirstListItem(`subscriber = "${subscriberId}" && subscribedTo = "${subscribedToId}"`)
-  }
-
   getFile(file: File) {
     return file.fileName ? `${this.client.baseUrl}/api/files/${file.collectionId}/${file.recordId}/${file.fileName}` : ""
   }

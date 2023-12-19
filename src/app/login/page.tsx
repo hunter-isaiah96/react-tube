@@ -2,12 +2,9 @@
 import { useState } from "react"
 import { Avatar, CssBaseline, TextField, Grid, Box, Typography, Container, Link } from "@mui/material"
 import { LoadingButton } from "@mui/lab"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { setCookie } from "typescript-cookie"
-
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import db from "@/app/helpers/connect"
-const theme = createTheme()
 
 type LoginData = {
   username: string
@@ -19,6 +16,7 @@ export default function SignIn() {
     username: "",
     password: "",
   })
+
   const [authenticating, setAuthenticating] = useState<boolean>(false)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -44,7 +42,8 @@ export default function SignIn() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
+      <title>ReactTube - Sign in</title>
       <Container
         component='main'
         maxWidth='xs'
@@ -133,6 +132,6 @@ export default function SignIn() {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
+    </>
   )
 }
