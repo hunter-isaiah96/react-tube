@@ -3,12 +3,13 @@ import "./style.scss"
 import { Avatar, Box, Divider, Grid, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
 import db from "@/app/helpers/connect"
 import { VideosUsersResponse } from "@/app/pocketbase-types"
-import { useReducer, useState } from "react"
+import { useEffect, useReducer, useState } from "react"
 import { CheckCircle, ContentCut, PlaylistAdd, Reply, ThumbDownAlt, ThumbDownAltOutlined, ThumbUpAlt, ThumbUpAltOutlined } from "@mui/icons-material"
 import PillButton from "@/app/components/ui/PillButton"
 import { useAuthStore } from "@/app/zustand/user"
 type Video = {
   video: VideosUsersResponse
+  isSubscribed: boolean
 }
 
 type RatingState = {
@@ -50,9 +51,9 @@ const ratingReducer = (state: RatingState, action: Action): RatingState => {
   }
 }
 
-export default function EngagementPanel({ video }: Video) {
+export default function EngagementPanel({ video, isSubscribed }: Video) {
   const { user } = useAuthStore()
-  const [subscribed, setSubscribed] = useState<boolean>(false)
+  const [subscribed, setSubscribed] = useState<boolean>(isSubscribed)
   const [state, dispatch] = useReducer(ratingReducer, ratingState)
   const { likes, dislikes, isLiked, isDisliked } = state
 

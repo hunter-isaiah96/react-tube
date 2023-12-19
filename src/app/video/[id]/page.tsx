@@ -6,7 +6,7 @@ import "./style.scss"
 import { Metadata } from "next"
 
 // Custom helpers
-import db from "@/app/helpers/connect"
+import db, { POCKET_BASE_URL } from "@/app/helpers/connect"
 
 // Material-UI components
 import { Grid, List, Typography } from "@mui/material"
@@ -16,8 +16,10 @@ import PlayListItem from "@/app/components/playlist/PlayListItem"
 import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"
 import CommentsWrapper from "@/app/components/video/comments-section/CommentsWrapper"
 import VideoPlayer from "@/app/components/video/video-player/video-player"
+import Pocketbase from "pocketbase"
 import { ListResult } from "pocketbase"
-import { VideosResponse, VideosUsersResponse } from "@/app/pocketbase-types"
+import { cookies } from "next/headers"
+import { VideosUsersResponse } from "@/app/pocketbase-types"
 
 type IVideo = {
   params: {
@@ -44,6 +46,10 @@ export default async function Video({ params }: IVideo) {
   const videoData = db.getVideo(params.id)
   const commentsData = db.getComments(params.id)
   const [video, { items: comments, totalItems: totalComments }] = await Promise.all([videoData, commentsData])
+
+  const authCookie = cookies().get("pb_auth")
+  const tempPB = new Pocketbase(POCKET_BASE_URL)
+  // create a new one-off install from an existing one
 
   const titleKeywords: string[] = video.title
     .toLowerCase()
@@ -81,7 +87,10 @@ export default async function Video({ params }: IVideo) {
           >
             {video.title}
           </Typography>
-          <EngagementPanel video={video}></EngagementPanel>
+          <EngagementPanel
+            video={video}
+            isSubscribed={true}
+          ></EngagementPanel>
           <CommentsWrapper
             initialComments={comments}
             totalComments={totalComments}

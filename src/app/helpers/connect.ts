@@ -1,5 +1,5 @@
 import PocketBase, { ListResult } from "pocketbase"
-import { Collections, CommentsResponse, UsersResponse, type VideosUsersResponse } from "@/app/pocketbase-types"
+import { Collections, CommentsResponse, SubscriptionsResponse, UsersResponse, type VideosUsersResponse } from "@/app/pocketbase-types"
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 
 export const POCKET_BASE_URL = "http://127.0.0.1:8090"
@@ -26,7 +26,7 @@ class DBClient {
   async getUser(cookieStore: ReadonlyRequestCookies) {
     const cookie = cookieStore.get("pb_auth")
     if (!cookie) {
-      return false
+      return null
     }
     this.client.authStore.loadFromCookie(`pb_auth=${cookie?.value}` || "")
     return this.client.authStore.model as UsersResponse
@@ -45,6 +45,10 @@ class DBClient {
       expand: "user",
       sort: "-created",
     })
+  }
+
+  async getSubscription(subscriberId: string, subscribedToId: string): Promise<SubscriptionsResponse> {
+    return this.client.collection(Collections.Subscriptions).getFirstListItem(`subscriber = "${subscriberId}" && subscribedTo = "${subscribedToId}"`)
   }
 
   getFile(file: File) {
