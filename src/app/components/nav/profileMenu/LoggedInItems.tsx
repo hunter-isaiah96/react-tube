@@ -1,25 +1,23 @@
 "use client"
-import { AppDispatch } from "@/store/store"
-import { Logout, Settings } from "@mui/icons-material"
+import { Logout } from "@mui/icons-material"
 import { Avatar, Divider, ListItemIcon, MenuItem } from "@mui/material"
-import { useDispatch } from "react-redux"
 import { removeCookie } from "typescript-cookie"
 import db from "@/app/helpers/connect"
-import { setUser } from "@/store/features/auth-slice"
 import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/app/zustand/user"
 
 type LoggedInItemsProps = {
   avatar: string
 }
 
 export default function LoggedInItems(props: LoggedInItemsProps) {
-  const dispatch = useDispatch<AppDispatch>()
+  const { setUser } = useAuthStore()
   const router = useRouter()
 
   const handleLogout = async () => {
     removeCookie("pb_auth")
     db.client.authStore.clear()
-    dispatch(setUser(false))
+    setUser(null)
     router.push("/login")
   }
   return (
@@ -31,15 +29,6 @@ export default function LoggedInItems(props: LoggedInItemsProps) {
         <Avatar src={props.avatar} /> Profile
       </MenuItem>
       <Divider />
-      <MenuItem
-        key='settings'
-        // onClick={() => props.handleClose()}
-      >
-        <ListItemIcon>
-          <Settings fontSize='small' />
-        </ListItemIcon>
-        Settings
-      </MenuItem>
       <MenuItem
         key='logout'
         onClick={() => {

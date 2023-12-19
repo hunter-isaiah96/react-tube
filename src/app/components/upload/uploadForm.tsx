@@ -1,40 +1,22 @@
-import { useUploadVideoStore } from "@/app/zustand/uploadVideo"
+"use client"
+import { useUploadVideoStore, resetUploadVideoForm } from "@/app/zustand/uploadVideo"
 import { LoadingButton } from "@mui/lab"
 import { Autocomplete, Box, Chip, TextField } from "@mui/material"
-import { useRouter } from "next/navigation"
-import { base64ToBlob } from "@/app/helpers/video"
-import db from "@/app//helpers/connect"
-import { UsersResponse } from "@/app/pocketbase-types"
-import { useAppSelector } from "@/store/store"
-
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 export default function UploadForm() {
+  // const router = useRouter()
   const router = useRouter()
-  const { title, setTitle, description, setDescription, tags, setTags, videoThumbnails, selectedThumbnail, videoFile, setIsUploadingVideo, isUploadingVideo } =
-    useUploadVideoStore()
-  const user: UsersResponse | false = useAppSelector((state) => state.authReducer.value.user)
-
-  const uploadVideo = async () => {
+  const { title, setTitle, description, setDescription, tags, setTags, isUploadingVideo, uploadVideo } = useUploadVideoStore()
+  const handleUploadVideo = async () => {
     try {
-      setIsUploadingVideo(true)
-      let thumb = videoThumbnails.find((thumbnail) => thumbnail.id == selectedThumbnail)
-      if (!videoFile || !thumb || !user) return
-      const formData = new FormData()
-      formData.append("video", videoFile)
-      formData.append("title", title)
-      formData.append("description", description)
-      formData.append("thumbnail", base64ToBlob(thumb.image.split(",")[1]))
-      formData.append("tags", JSON.stringify(tags))
-      formData.append("user", user.id)
-      const videoRecord = await db.client.collection("videos").create(formData)
-      router.push(`/video/${videoRecord.id}`)
+      const uploadedVideo = await uploadVideo()
+      router.push(`/video/${uploadedVideo.id}`)
       router.refresh()
-    } catch (e) {
-      // Error handling if upload fails
-    } finally {
-      // setUploading(false)
-      setIsUploadingVideo(false)
-    }
+    } catch (error) {}
   }
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   return (
     <Box marginTop={1}>
       <TextField
@@ -82,7 +64,7 @@ export default function UploadForm() {
         )}
       />
       <LoadingButton
-        onClick={uploadVideo}
+        onClick={handleUploadVideo}
         disabled={isUploadingVideo}
         variant='contained'
         fullWidth

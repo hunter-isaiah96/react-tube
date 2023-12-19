@@ -2,20 +2,19 @@
 import { Avatar, FormControl, Grid, Input, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material"
 import PillButton from "../../ui/PillButton"
 import { useState } from "react"
-import { CommentsResponse, UsersResponse } from "@/app/pocketbase-types"
-import { useAppSelector } from "@/store/store"
+import { CommentsResponse } from "@/app/pocketbase-types"
 import db from "@/app/helpers/connect"
 import { useParams } from "next/navigation"
+import { useAuthStore } from "@/app/zustand/user"
 interface SubmitCommentProps {
   addComment: (newComment: CommentsResponse) => void
 }
 
 export default function SubmitComment({ addComment }: SubmitCommentProps) {
   const params = useParams()
-
+  const { user } = useAuthStore()
   const [commentsEnabled, setCommentsEnabled] = useState<boolean>(false)
   const [comment, setComment] = useState<string>("")
-  const user: UsersResponse | false = useAppSelector((state) => state.authReducer.value.user)
 
   const handleCommentSubmit = async () => {
     // Create a new comment object

@@ -2,18 +2,15 @@
 import { useEffect } from "react"
 import db from "@/app/helpers/connect"
 import { getCookie } from "typescript-cookie"
-import { setUser } from "@/store/features/auth-slice"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/store/store"
-import { UsersResponse } from "../pocketbase-types"
+import { type UsersResponse } from "../pocketbase-types"
+import { useAuthStore } from "../zustand/user"
 
 function usePBAuth() {
-  const dispatch = useDispatch<AppDispatch>()
-
+  const { setUser } = useAuthStore()
   useEffect(() => {
     db.client.authStore.loadFromCookie(getCookie("pb_auth") || "")
-    dispatch(setUser(db.client.authStore.model as UsersResponse))
-  })
+    setUser(db.client.authStore.model as UsersResponse)
+  }, [setUser])
 }
 
 export default usePBAuth

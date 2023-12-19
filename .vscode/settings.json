@@ -1,0 +1,16 @@
+{
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "server",
+          "commands": ["yarn dev"]
+        },
+        {
+          "name": "pocketbase",
+          "commands": ["yarn pb"]
+        }
+      ]
+    }
+  ]
+}

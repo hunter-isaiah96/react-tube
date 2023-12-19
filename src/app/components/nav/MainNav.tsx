@@ -3,16 +3,16 @@ import { useState } from "react"
 import { AppBar, Toolbar, Typography, IconButton, Box, styled } from "@mui/material"
 import { Menu as MenuIcon, VideoCallOutlined } from "@mui/icons-material"
 import { usePathname, useRouter } from "next/navigation"
+import { useAuthStore } from "@/app/zustand/user"
 import SearchBar from "./SearchBar"
 import NavDrawer from "./NavDrawer"
 import ProfileMenu from "./profileMenu/ProfileMenu"
-import { useAppSelector } from "@/store/store"
 
 export default function MainNav() {
   const currentPath = usePathname()
   const router = useRouter()
   const [drawerOpen, setdrawerOpen] = useState<boolean>(false)
-  const user = useAppSelector((state) => state.authReducer.value.user)
+  const { user } = useAuthStore()
 
   const handleMenuToggle = () => {
     setdrawerOpen(!drawerOpen)
@@ -65,7 +65,7 @@ export default function MainNav() {
                     <VideoCallOutlined></VideoCallOutlined>
                   </IconButton>
                 ) : null}
-                <ProfileMenu user={user}></ProfileMenu>
+                <ProfileMenu></ProfileMenu>
               </EqualBox>
             </Toolbar>
           </AppBar>

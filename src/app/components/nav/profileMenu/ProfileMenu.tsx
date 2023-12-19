@@ -1,16 +1,13 @@
 "use client"
 import { useEffect, useState } from "react"
 import { Box, Avatar, Menu, IconButton, Tooltip } from "@mui/material"
-import { UsersResponse } from "@/app/pocketbase-types"
 import db from "@/app/helpers/connect"
 import LoggedInItems from "./LoggedInItems"
 import LoggedOutItems from "./LoggedOutItems"
+import { useAuthStore } from "@/app/zustand/user"
 
-type UserProps = {
-  user: UsersResponse | false
-}
-
-export default function ProfileMenu(props: UserProps) {
+export default function ProfileMenu() {
+  const { user } = useAuthStore()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [profileImage, setProfileImage] = useState<string>("")
   const open = Boolean(anchorEl)
@@ -24,8 +21,8 @@ export default function ProfileMenu(props: UserProps) {
   }
 
   useEffect(() => {
-    if (props.user) setProfileImage(db.getFile({ collectionId: props.user.collectionId, recordId: props.user.id, fileName: props.user.avatar }))
-  }, [props.user])
+    if (user) setProfileImage(db.getFile({ collectionId: user.collectionId, recordId: user.id, fileName: user.avatar }))
+  }, [user])
 
   const menuSlotProps = {
     paper: {
@@ -66,9 +63,9 @@ export default function ProfileMenu(props: UserProps) {
             aria-expanded={open ? "true" : undefined}
             onClick={toggleProfileMenu}
           >
-            {props.user ? (
+            {user ? (
               <Avatar
-                alt={props.user.name}
+                alt={user.username}
                 src={profileImage}
               ></Avatar>
             ) : (
@@ -88,7 +85,7 @@ export default function ProfileMenu(props: UserProps) {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {props.user ? <LoggedInItems avatar={profileImage}></LoggedInItems> : <LoggedOutItems></LoggedOutItems>}
+        {user ? <LoggedInItems avatar={profileImage}></LoggedInItems> : <LoggedOutItems></LoggedOutItems>}
       </Menu>
     </>
   )
