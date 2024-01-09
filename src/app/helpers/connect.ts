@@ -47,6 +47,16 @@ class DBClient {
     })
   }
 
+  async getSubscription(subscriberId: string, subscribedToId: string): Promise<SubscriptionsResponse> {
+    return this.client.collection(Collections.Subscriptions).getFirstListItem(`subscriber = "${subscriberId}" && subscribedTo = "${subscribedToId}"`)
+  }
+
+  async getTotalSubscribers(subscribedToId: string): Promise<ListResult<SubscriptionsResponse>> {
+    return this.client.collection(Collections.Subscriptions).getList(1, 1, {
+      filter: `subscribedTo = "${subscribedToId}"`,
+    })
+  }
+
   getFile(file: File) {
     return file.fileName ? `${this.client.baseUrl}/api/files/${file.collectionId}/${file.recordId}/${file.fileName}` : ""
   }

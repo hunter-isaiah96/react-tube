@@ -2,17 +2,17 @@
 import "./style.scss"
 import { Avatar, Box, Divider, Grid, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
 import db from "@/app/helpers/connect"
-import { VideosUsersResponse } from "@/app/pocketbase-types"
-import { useEffect, useReducer, useState } from "react"
+import { UsersResponse, VideosUsersResponse } from "@/app/pocketbase-types"
+import { useReducer, useState } from "react"
 import { CheckCircle, ContentCut, PlaylistAdd, Reply, ThumbDownAlt, ThumbDownAltOutlined, ThumbUpAlt, ThumbUpAltOutlined } from "@mui/icons-material"
 import PillButton from "@/app/components/ui/PillButton"
 import { useAuthStore } from "@/app/zustand/user"
+import { useRouter } from "next/navigation"
+import { getTotalSubscribers } from "@/app/video/[id]/VideoService"
 type Video = {
   video: VideosUsersResponse
-  subscription: {
-    subscribed: boolean
-    id: string | null
-  }
+  isSubscribed: boolean
+  totalSubscribers: number
 }
 
 type RatingState = {
@@ -53,25 +53,62 @@ const ratingReducer = (state: RatingState, action: Action): RatingState => {
       return state
   }
 }
+interface SubscriptionButtonProps {
+  user: UsersResponse | null
+  subscribed: boolean
+  handleSubscription: () => void
+}
 
-export default function EngagementPanel({ video, subscription }: Video) {
+function SubscriptionButton({ user, subscribed, handleSubscription }: SubscriptionButtonProps) {
+  if (user)
+    return (
+      <PillButton
+        startIcon={subscribed ? <CheckCircle></CheckCircle> : null}
+        color={subscribed ? "success" : "primary"}
+        variant='contained'
+        onClick={() => {
+          handleSubscription()
+        }}
+      >
+        {subscribed ? "Subscribed" : "Subscribe"}
+      </PillButton>
+    )
+  return null
+}
+
+export default function EngagementPanel({ video, isSubscribed, totalSubscribers }: Video) {
   const { user } = useAuthStore()
-  const [subscribed, setSubscribed] = useState<{ subscribed: boolean; id: string | null }>({ subscribed: subscription.subscribed, id: subscription.id })
+  const router = useRouter()
+  const [subscribed, setSubscribed] = useState<boolean>(isSubscribed)
   const [state, dispatch] = useReducer(ratingReducer, ratingState)
   const { likes, dislikes, isLiked, isDisliked } = state
 
-  const subscribeToUser = async () => {
+  const handleSubscription = async () => {
     try {
-      if (!subscribed && !subscription.id) {
+      if (!subscribed) {
         const newSubscription = await db.client.collection("subscriptions").create({
-          subscriber: user?.id,
-          subscribedTo: video.user,
+          follower: user?.id,
+          follows: video.user,
         })
-      } else {
-        if (subscription.id) await db.client.collection("subscriptions").delete(subscription.id)
       }
-      setSubscribed({})
+      setSubscribed(!subscribed)
     } catch (e) {}
+  }
+
+  const handleLike = () => {
+    if (user) {
+      dispatch({ type: "LIKE" })
+      return
+    }
+    router.push("/login")
+  }
+
+  const handleDislike = () => {
+    if (user) {
+      dispatch({ type: "DISLIKE" })
+      return
+    }
+    router.push("/login")
   }
 
   return (
@@ -87,7 +124,7 @@ export default function EngagementPanel({ video, subscription }: Video) {
             </ListItemAvatar>
             <ListItemText
               primary={video.expand.user.username}
-              secondary='1.2M Subscribers'
+              secondary={`${totalSubscribers} subscriber${totalSubscribers === 1 ? "" : "s"}`}
             />
           </ListItem>
         </Grid>
@@ -95,16 +132,11 @@ export default function EngagementPanel({ video, subscription }: Video) {
           item
           marginLeft={5}
         >
-          <PillButton
-            startIcon={subscribed.subscribed ? <CheckCircle></CheckCircle> : null}
-            color={subscribed.subscribed ? "success" : "primary"}
-            variant='contained'
-            onClick={() => {
-              subscribeToUser()
-            }}
-          >
-            {subscribed.subscribed ? "Subscribed" : "Subscribe"}
-          </PillButton>
+          <SubscriptionButton
+            user={user}
+            subscribed={subscribed}
+            handleSubscription={handleSubscription}
+          ></SubscriptionButton>
         </Grid>
         <Grid
           flexGrow={1}
@@ -122,14 +154,14 @@ export default function EngagementPanel({ video, subscription }: Video) {
                 <PillButton
                   startIcon={isLiked ? <ThumbUpAlt></ThumbUpAlt> : <ThumbUpAltOutlined></ThumbUpAltOutlined>}
                   sx={{ borderTopRightRadius: 0, borderBottomRightRadius: 0, borderRight: "1px solid rgba(0,0,0,0.1)" }}
-                  onClick={() => dispatch({ type: "LIKE" })}
+                  onClick={() => handleLike()}
                 >
                   {likes}
                 </PillButton>
                 <PillButton
                   startIcon={isDisliked ? <ThumbDownAlt></ThumbDownAlt> : <ThumbDownAltOutlined></ThumbDownAltOutlined>}
                   sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
-                  onClick={() => dispatch({ type: "DISLIKE" })}
+                  onClick={() => handleDislike()}
                 >
                   {dislikes}
                 </PillButton>

@@ -1,88 +1,44 @@
-import { cache } from "react"
-// External styles
 import "./style.scss"
 
-// Next.js
-import { Metadata } from "next"
-
-// Custom helpers
-import db, { POCKET_BASE_URL } from "@/app/helpers/connect"
-
-// Material-UI components
-import { Grid, List, Typography } from "@mui/material"
-
-// Custom components
 import PlayListItem from "@/app/components/playlist/PlayListItem"
-import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"
 import CommentsWrapper from "@/app/components/video/comments-section/CommentsWrapper"
+import EngagementPanel from "@/app/components/video/engagement-panel/EngagementPanel"
 import VideoPlayer from "@/app/components/video/video-player/video-player"
-import Pocketbase from "pocketbase"
-import { ListResult } from "pocketbase"
-import { cookies } from "next/headers"
-import { Collections, UsersResponse, VideosUsersResponse } from "@/app/pocketbase-types"
+import db from "@/app/helpers/connect"
+import { UsersResponse, VideosUsersResponse } from "@/app/pocketbase-types"
+import { Grid, List, Typography } from "@mui/material"
+import { Metadata } from "next"
+import { checkSubscription, getSimilarVideos, getTotalSubscribers, getUserFromHeaders, getVideoDetails } from "./VideoService"
 
 type IVideo = {
   params: {
     id: string
+    name: string
   }
 }
+
 db.client.autoCancellation(false)
 
-export const getVideoMetaData = cache(async (id: string) => {
-  const video = await db.getVideo(id)
-  return {
-    title: video.title,
-  }
-})
-
 export async function generateMetadata({ params }: IVideo): Promise<Metadata> {
-  const video = await getVideoMetaData(params.id)
-  return {
-    title: video.title,
+  try {
+    const video = await db.getVideo(params.id)
+    return {
+      title: video.title,
+    }
+  } catch (e) {
+    return {
+      title: "",
+    }
   }
 }
 
 export default async function Video({ params }: IVideo) {
-  const videoData = db.getVideo(params.id)
-  const commentsData = db.getComments(params.id)
-  const [video, { items: comments, totalItems: totalComments }] = await Promise.all([videoData, commentsData])
-  let subscribed: { subscribed: boolean; id: string | null } = {
-    subscribed: false,
-    id: null,
-  }
-  const authCookie = cookies().get("pb_auth")
-  const tempPB = new Pocketbase(POCKET_BASE_URL)
-  if (authCookie) {
-    tempPB.authStore.loadFromCookie(authCookie?.value)
-  }
-  try {
-    const user = tempPB.authStore.model as UsersResponse
-    const subscription = await tempPB.collection(Collections.Subscriptions).getFirstListItem(`subscriber = "${user.id}" && subscribedTo = "${video.expand.user.id}"`)
-    subscribed.subscribed = true
-    subscribed.id = subscription.id
-  } catch (error) {}
-
-  // create a new one-off install from an existing one
-
-  const titleKeywords: string[] = video.title
-    .toLowerCase()
-    .split(" ")
-    .map((keyword: string) => `title ~ "${keyword}"`)
-
-  const recommendationFilters = {
-    filter: `id != "${video.id}" && (${titleKeywords.join("||")})`, // Ensures excluding the video with the same ID
-    expand: "user",
-    sort: "@random",
-  }
-
-  if (video.tags && video.tags.length > 0) {
-    recommendationFilters.filter = recommendationFilters.filter.slice(0, -1)
-    const tagFilters: string[] = video.tags.map((tag: string) => `tags ~ "${tag}"`)
-    recommendationFilters.filter += ` || ${tagFilters.join(" || ")})` // Combining tag filters using OR (||)
-  }
-
-  const { items: similarVideos }: ListResult<VideosUsersResponse> = await db.client.collection("videos").getList(1, 20, recommendationFilters)
-
+  const { video, comments } = await getVideoDetails(params.id)
+  if (!video) return
+  const user: UsersResponse | null = getUserFromHeaders()
+  const { similarVideos } = await getSimilarVideos(video)
+  const totalSubscribers = await getTotalSubscribers(video.expand.user.id)
+  const isSubscribed = await checkSubscription(user?.id, video.expand.user.id)
   return (
     <>
       <Grid
@@ -102,11 +58,12 @@ export default async function Video({ params }: IVideo) {
           </Typography>
           <EngagementPanel
             video={video}
-            subscription={subscribed}
+            totalSubscribers={totalSubscribers}
+            isSubscribed={isSubscribed}
           ></EngagementPanel>
           <CommentsWrapper
-            initialComments={comments}
-            totalComments={totalComments}
+            initialComments={comments.items}
+            totalComments={comments.totalItems}
           ></CommentsWrapper>
         </Grid>
         <Grid
@@ -126,4 +83,5 @@ export default async function Video({ params }: IVideo) {
     </>
   )
 }
+
 export const fetchCache = "default-no-store"
