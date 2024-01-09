@@ -6,7 +6,7 @@ import { setCookie } from "typescript-cookie"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import db from "@/app/helpers/connect"
 import AuthNav from "../components/nav/AuthNav"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 type LoginData = {
   username: string
@@ -48,6 +48,7 @@ export default function SignIn() {
       component='main'
       maxWidth='xs'
     >
+      <AuthNav></AuthNav>
       <Box
         sx={{
           marginTop: 8,

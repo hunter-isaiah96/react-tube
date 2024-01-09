@@ -26,6 +26,8 @@ export default function SignIn() {
       component='main'
       maxWidth='xs'
     >
+      <AuthNav></AuthNav>
+
       <Box
         sx={{
           marginTop: 8,

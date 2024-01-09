@@ -86,7 +86,7 @@ export default function EngagementPanel({ video, isSubscribed, totalSubscribers 
   const handleSubscription = async () => {
     try {
       if (!subscribed) {
-        const newSubscription = await db.client.collection("subscriptions").create({
+        await db.client.collection("subscriptions").create({
           follower: user?.id,
           follows: video.user,
         })
