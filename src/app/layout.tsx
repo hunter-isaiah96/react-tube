@@ -1,10 +1,11 @@
-import "./globals.css"
+import { Box, ThemeProvider } from "@mui/material"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { Box } from "@mui/material"
-import MainNav from "./components/nav/MainNav"
 import AppWrapper from "./components/AppWrapper"
+import MainNav from "./components/nav/MainNav"
+import "./globals.css"
 import { RouteChangeListener } from "./routeChangeListener"
+import { theme } from "./theme"
 
 const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
@@ -16,13 +17,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <AppWrapper>
-          <RouteChangeListener />
-          <MainNav />
-          <main>
-            <Box sx={{ padding: 2 }}>{children}</Box>
-          </main>
-        </AppWrapper>
+        <ThemeProvider theme={theme}>
+          <AppWrapper>
+            <RouteChangeListener />
+            <MainNav />
+            <main>
+              <Box sx={{ padding: 2 }}>{children}</Box>
+            </main>
+          </AppWrapper>
+        </ThemeProvider>
       </body>
     </html>
   )
