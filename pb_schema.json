@@ -28,16 +28,10 @@
         "presentable": false,
         "unique": false,
         "options": {
+          "mimeTypes": ["image/jpeg", "image/png", "image/svg+xml", "image/gif", "image/webp"],
+          "thumbs": null,
           "maxSelect": 1,
           "maxSize": 5242880,
-          "mimeTypes": [
-            "image/jpeg",
-            "image/png",
-            "image/svg+xml",
-            "image/gif",
-            "image/webp"
-          ],
-          "thumbs": null,
           "protected": false
         }
       }
@@ -56,6 +50,7 @@
       "manageRule": null,
       "minPasswordLength": 8,
       "onlyEmailDomains": null,
+      "onlyVerified": false,
       "requireEmail": false
     }
   },
@@ -102,10 +97,10 @@
         "presentable": false,
         "unique": false,
         "options": {
-          "maxSelect": 1,
-          "maxSize": 5242880,
           "mimeTypes": [],
           "thumbs": [],
+          "maxSelect": 1,
+          "maxSize": 5242880,
           "protected": false
         }
       },
@@ -148,10 +143,10 @@
         "presentable": false,
         "unique": false,
         "options": {
-          "maxSelect": 1,
-          "maxSize": 100000000,
           "mimeTypes": [],
           "thumbs": [],
+          "maxSelect": 1,
+          "maxSize": 100000000,
           "protected": false
         }
       }

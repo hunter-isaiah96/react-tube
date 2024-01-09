@@ -167,7 +167,7 @@ export default function EngagementPanel({ video, isSubscribed, totalSubscribers 
                 </PillButton>
               </Box>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <PillButton startIcon={<Reply></Reply>}>Share</PillButton>
             </Grid>
             <Grid item>
@@ -175,7 +175,7 @@ export default function EngagementPanel({ video, isSubscribed, totalSubscribers 
             </Grid>
             <Grid item>
               <PillButton startIcon={<PlaylistAdd></PlaylistAdd>}>Save</PillButton>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
       </Grid>

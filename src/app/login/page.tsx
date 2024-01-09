@@ -1,13 +1,12 @@
 "use client"
 import { useState } from "react"
-import { Avatar, CssBaseline, TextField, Grid, Box, Typography, Container, Link } from "@mui/material"
+import { Avatar, TextField, Grid, Box, Typography, Container, Link } from "@mui/material"
 import { LoadingButton } from "@mui/lab"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { setCookie } from "typescript-cookie"
-
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import db from "@/app/helpers/connect"
-const theme = createTheme()
+import AuthNav from "../components/nav/AuthNav"
+import { useRouter } from "next/router"
 
 type LoginData = {
   username: string
@@ -15,6 +14,7 @@ type LoginData = {
 }
 
 export default function SignIn() {
+  const router = useRouter()
   const [authData, setAuthData] = useState<LoginData>({
     username: "",
     password: "",
@@ -35,7 +35,7 @@ export default function SignIn() {
       setAuthenticating(true)
       await db.client.collection("users").authWithPassword(authData.username, authData.password)
       setCookie("pb_auth", db.client.authStore.exportToCookie({ httpOnly: false }))
-      window.location.href = "/"
+      router.push("/")
     } catch (error) {
       setAuthenticating(false)
     } finally {

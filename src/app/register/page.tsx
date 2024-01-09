@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Avatar, CssBaseline, TextField, Grid, Box, Typography, Container, Link } from "@mui/material"
 import { LoadingButton } from "@mui/lab"
 import Person from "@mui/icons-material/Person"
+import AuthNav from "../components/nav/AuthNav"
 
 export default function SignIn() {
   const [username, setUsername] = useState<string>("rhynoboy2009")
