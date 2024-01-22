@@ -11,7 +11,7 @@ export default function VideoPreview({ video }: { video: VideosUsersResponse }) 
         <CardActionArea>
           <CardMedia
             component='img'
-            alt='green iguana'
+            alt={video.title}
             height={180}
             image={db.getFile({ collectionId: video.collectionId, recordId: video.id, fileName: video.thumbnail })}
           />

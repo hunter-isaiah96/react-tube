@@ -1,14 +1,13 @@
 "use client"
-import "./style.scss"
-import { Avatar, Box, Divider, Grid, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
+import PillButton from "@/app/components/ui/PillButton"
 import db from "@/app/helpers/connect"
 import { UsersResponse, VideosUsersResponse } from "@/app/pocketbase-types"
-import { useReducer, useState } from "react"
-import { CheckCircle, ContentCut, PlaylistAdd, Reply, ThumbDownAlt, ThumbDownAltOutlined, ThumbUpAlt, ThumbUpAltOutlined } from "@mui/icons-material"
-import PillButton from "@/app/components/ui/PillButton"
 import { useAuthStore } from "@/app/zustand/user"
+import { CheckCircle, ThumbDownAlt, ThumbDownAltOutlined, ThumbUpAlt, ThumbUpAltOutlined } from "@mui/icons-material"
+import { Avatar, Box, Divider, Grid, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
 import { useRouter } from "next/navigation"
-import { getTotalSubscribers } from "@/app/video/[id]/VideoService"
+import { useReducer, useState } from "react"
+import "./style.scss"
 type Video = {
   video: VideosUsersResponse
   isSubscribed: boolean
@@ -53,6 +52,7 @@ const ratingReducer = (state: RatingState, action: Action): RatingState => {
       return state
   }
 }
+
 interface SubscriptionButtonProps {
   user: UsersResponse | null
   subscribed: boolean
@@ -84,28 +84,22 @@ export default function EngagementPanel({ video, isSubscribed, totalSubscribers 
   const { likes, dislikes, isLiked, isDisliked } = state
 
   const handleSubscription = async () => {
-    try {
-      if (!subscribed) {
-        await db.client.collection("subscriptions").create({
-          follower: user?.id,
-          follows: video.user,
-        })
-      }
-      setSubscribed(!subscribed)
-    } catch (e) {}
+    const subscribe = await db.setSubscription(user?.id, video.user, !subscribed)
+    setSubscribed(subscribe)
   }
 
-  const handleLike = () => {
+  const toggleRating = (type: "LIKE" | "DISLIKE") => {
     if (user) {
-      dispatch({ type: "LIKE" })
+      dispatch({ type })
       return
     }
     router.push("/login")
   }
 
-  const handleDislike = () => {
+  const reactToVideo = async (type: "LIKE" | "DISLIKE") => {
     if (user) {
-      dispatch({ type: "DISLIKE" })
+      await db.setReaction(type, user?.id, video.id)
+      dispatch({ type })
       return
     }
     router.push("/login")
@@ -154,14 +148,14 @@ export default function EngagementPanel({ video, isSubscribed, totalSubscribers 
                 <PillButton
                   startIcon={isLiked ? <ThumbUpAlt></ThumbUpAlt> : <ThumbUpAltOutlined></ThumbUpAltOutlined>}
                   sx={{ borderTopRightRadius: 0, borderBottomRightRadius: 0, borderRight: "1px solid rgba(0,0,0,0.1)" }}
-                  onClick={() => handleLike()}
+                  onClick={() => reactToVideo("LIKE")}
                 >
                   {likes}
                 </PillButton>
                 <PillButton
                   startIcon={isDisliked ? <ThumbDownAlt></ThumbDownAlt> : <ThumbDownAltOutlined></ThumbDownAltOutlined>}
                   sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
-                  onClick={() => handleDislike()}
+                  onClick={() => reactToVideo("DISLIKE")}
                 >
                   {dislikes}
                 </PillButton>

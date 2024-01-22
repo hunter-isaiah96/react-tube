@@ -22,7 +22,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <RouteChangeListener />
             <MainNav />
             <main>
-              <Box sx={{ padding: 2 }}>{children}</Box>
+              <Box
+                sx={{ padding: 2 }}
+                justifyContent='center'
+              >
+                {children}
+              </Box>
             </main>
           </AppWrapper>
         </ThemeProvider>

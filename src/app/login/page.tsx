@@ -35,7 +35,7 @@ export default function SignIn() {
       setAuthenticating(true)
       await db.client.collection("users").authWithPassword(authData.username, authData.password)
       setCookie("pb_auth", db.client.authStore.exportToCookie({ httpOnly: false }))
-      router.push("/")
+      window.location.href = "/"
     } catch (error) {
       setAuthenticating(false)
     } finally {

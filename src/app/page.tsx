@@ -18,7 +18,9 @@ export default async function Home() {
       {videos.map((item, index) => (
         <Grid
           item
-          xs={12 / 5}
+          xs={12}
+          md={4}
+          xl={12 / 5}
           key={item.id}
         >
           <VideoPreview video={item} />

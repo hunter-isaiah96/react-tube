@@ -12,7 +12,7 @@ type File = {
 class DBClient {
   client: PocketBase
   constructor() {
-    this.client = new PocketBase("http://127.0.0.1:8090")
+    this.client = new PocketBase(POCKET_BASE_URL)
   }
 
   async authenticate(username: string, password: string) {
@@ -32,11 +32,33 @@ class DBClient {
     return this.client.authStore.model as UsersResponse
   }
 
+  async getVideo(videoId: string): Promise<VideosUsersResponse> {
+    return this.client.collection(Collections.Videos).getFirstListItem<VideosUsersResponse>(`id ~ "${videoId}"`, { expand: "user" })
+  }
+
   async getVideos(): Promise<ListResult<VideosUsersResponse>> {
     return this.client.collection(Collections.Videos).getList<VideosUsersResponse>(1, 20, { expand: "user" })
   }
-  async getVideo(videoId: string): Promise<VideosUsersResponse> {
-    return this.client.collection(Collections.Videos).getFirstListItem<VideosUsersResponse>(`id ~ "${videoId}"`, { expand: "user" })
+
+  async getRecommendations(video: VideosUsersResponse): Promise<ListResult<VideosUsersResponse>> {
+    const titleKeywords: string[] = video.title
+      .toLowerCase()
+      .split(" ")
+      .map((keyword: string) => `title ~ "${keyword}"`)
+
+    const recommendationFilters = {
+      filter: `id != "${video.id}" && (${titleKeywords.join("||")})`, // Ensures excluding the video with the same ID
+      expand: "user",
+      sort: "@random",
+    }
+
+    if (video.tags && video.tags.length > 0) {
+      recommendationFilters.filter = recommendationFilters.filter.slice(0, -1)
+      const tagFilters: string[] = video.tags.map((tag: string) => `tags ~ "${tag}"`)
+      recommendationFilters.filter += ` || ${tagFilters.join(" || ")})` // Combining tag filters using OR (||)
+    }
+
+    return this.client.collection(Collections.Videos).getList(1, 20, recommendationFilters)
   }
 
   async getComments(videoId: string): Promise<ListResult<CommentsResponse>> {
@@ -55,6 +77,78 @@ class DBClient {
     return this.client.collection(Collections.Subscriptions).getList(1, 1, {
       filter: `subscribedTo = "${subscribedToId}"`,
     })
+  }
+
+  async setSubscription(subscriberId: string = "", subscribedToId: string = "", subscribe: boolean): Promise<boolean> {
+    if (!subscriberId || !subscribedToId) {
+      return false
+    }
+    try {
+      if (subscribe) {
+        await db.client.collection("subscriptions").create({
+          subscriber: subscriberId,
+          subscribedTo: subscribedToId,
+        })
+        return true
+      } else {
+        const subscription = await this.getSubscription(subscriberId, subscribedToId)
+        await db.client.collection("subscriptions").delete(subscription.id)
+        return false
+      }
+    } catch (error) {
+      return false
+    }
+  }
+
+  async setReaction(type: "LIKE" | "DISLIKE", user: string = "", video: string) {
+    if (!user) {
+      return
+    }
+    const reactionRecords = await this.client.collection(Collections.Likesdislikes).getList(1, 1, {
+      filter: `user="${user}" && video="${video}"`,
+    })
+    switch (type) {
+      case "LIKE":
+        try {
+          if (reactionRecords.items.length > 0) {
+            const reactionRecord = reactionRecords.items[0]
+            if (reactionRecord.isLike) {
+              return await this.client.collection(Collections.Likesdislikes).delete(reactionRecord.id)
+            } else if (!reactionRecord.isLike) {
+              return await this.client.collection(Collections.Likesdislikes).update(reactionRecord.id, {
+                isLike: true,
+              })
+            }
+          } else {
+            return await this.client.collection(Collections.Likesdislikes).create({
+              user,
+              video,
+              isLike: true,
+            })
+          }
+        } catch (error) {
+          console.log(error)
+        }
+        break
+      case "DISLIKE":
+        if (reactionRecords.items.length > 0) {
+          const reactionRecord = reactionRecords.items[0]
+          if (!reactionRecord.isLike) {
+            return await this.client.collection(Collections.Likesdislikes).delete(reactionRecord.id)
+          } else if (reactionRecord.isLike) {
+            return await this.client.collection(Collections.Likesdislikes).update(reactionRecord.id, {
+              isLike: false,
+            })
+          }
+        } else {
+          return await this.client.collection(Collections.Likesdislikes).create({
+            user,
+            video,
+            isLike: false,
+          })
+        }
+        break
+    }
   }
 
   getFile(file: File) {

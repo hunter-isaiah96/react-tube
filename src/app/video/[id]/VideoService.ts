@@ -34,23 +34,7 @@ export const getVideoDetails = async (id: string) => {
 }
 
 export const getSimilarVideos = async (video: VideosUsersResponse) => {
-  const titleKeywords: string[] = video.title
-    .toLowerCase()
-    .split(" ")
-    .map((keyword: string) => `title ~ "${keyword}"`)
-
-  const recommendationFilters = {
-    filter: `id != "${video.id}" && (${titleKeywords.join("||")})`, // Ensures excluding the video with the same ID
-    expand: "user",
-    sort: "@random",
-  }
-
-  if (video.tags && video.tags.length > 0) {
-    recommendationFilters.filter = recommendationFilters.filter.slice(0, -1)
-    const tagFilters: string[] = video.tags.map((tag: string) => `tags ~ "${tag}"`)
-    recommendationFilters.filter += ` || ${tagFilters.join(" || ")})` // Combining tag filters using OR (||)
-  }
-  const { items }: ListResult<VideosUsersResponse> = await db.client.collection("videos").getList(1, 20, recommendationFilters)
+  const { items }: ListResult<VideosUsersResponse> = await db.getRecommendations(video)
   return {
     similarVideos: items,
   }
